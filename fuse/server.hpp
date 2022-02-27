@@ -98,6 +98,8 @@ static open_res server_open(open_req req) {
 struct flush_req {
     std::string path;
     char buf[4096];
+    time_t atime;
+    time_t mtime;
 };
 
 struct flush_res {
@@ -115,6 +117,10 @@ static flush_res server_flush(flush_req req) {
         return res;
     }
     RET_ERR_SER(close(tmp_fd));
+    struct utimbuf times;
+    times.actime = req.atime;
+    times.modtime = req.mtime;
+    RET_ERR_SER(utime(tmp_path.c_str(), &times));
     RET_ERR_SER(rename(tmp_path.c_str(), to_server_path(req.path).c_str()));
     return res;
 }

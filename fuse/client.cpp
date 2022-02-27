@@ -140,6 +140,10 @@ static int do_flush(const char *path, struct fuse_file_info *fi) {
     req.path = path;
     memset(req.buf, 0, sizeof(req.buf));
     pread(fi->fh, req.buf, sizeof(req.buf), 0);
+    struct stat st;
+    fstat(fi->fh, &st);
+    req.atime = st.st_atime;
+    req.mtime = st.st_mtime;
     auto res = server_flush(req);
     if (res.ret != 0) return res.ret;
     RET_ERR(rename(write_path.c_str(), to_cache_path(path).c_str()));
