@@ -42,8 +42,8 @@ static std::string to_cache_path(const char *path) {
     return CACHE_FOLDER + hash_str(path);
 }
 
-static std::string to_write_cache_path(const char *path) {
-    return CACHE_FOLDER + hash_str(path) + ".dirty";
+static std::string to_write_cache_path(const char *path, int fd) {
+    return CACHE_FOLDER + hash_str(path) + std::to_string(fd) + ".dirty";
 }
 
 static int do_getattr(const char *path, struct stat *st) {
@@ -101,12 +101,7 @@ static int do_open(const char *path, struct fuse_file_info *fi) {
         // Cache file up-to-date
         if (st.st_mtime >= server_st.st_mtime) {
             int fd;
-            auto write_path = to_write_cache_path(path);
-            if (access(write_path.c_str(), F_OK) == 0) {
-                RET_ERR(fd = open(write_path.c_str(), O_RDWR));
-            } else {
-                RET_ERR(fd = open(cache_path.c_str(), O_RDWR));
-            }
+            RET_ERR(fd = open(cache_path.c_str(), O_RDWR));
             fi->fh = fd;
             return 0;
         }
@@ -132,7 +127,7 @@ static int do_open(const char *path, struct fuse_file_info *fi) {
 
 static int do_flush(const char *path, struct fuse_file_info *fi) {
     printf("[flush] %s\n", path);
-    auto write_path = to_write_cache_path(path);
+    auto write_path = to_write_cache_path(path, fi->fh);
     if (access(write_path.c_str(), F_OK) != 0) {
         return 0;
     }
@@ -168,7 +163,7 @@ static int do_rmdir(const char *path) {
 static int do_write(const char *path, const char *buffer, size_t size,
                     off_t offset, struct fuse_file_info *fi) {
     printf("[write] %s\n", path);
-    auto write_path = to_write_cache_path(path);
+    auto write_path = to_write_cache_path(path, fi->fh);
     // copy-on-write
     if (access(write_path.c_str(), F_OK) != 0) {
         printf("[write] copy-on-write!\n");
