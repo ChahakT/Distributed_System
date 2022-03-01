@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <fcntl.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
@@ -7,6 +8,7 @@
 
 #include "includes/hello.grpc.pb.h"
 
+using afs::gRPCService;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -14,62 +16,59 @@ using grpc::ServerReader;
 using grpc::ServerReaderWriter;
 using grpc::ServerWriter;
 using grpc::Status;
-using tutorial::ClientRequest;
-using tutorial::gRPCService;
-using tutorial::ServerResponse;
+
+static const std::string SERVER_FOLDER = "./server_folder/";
 
 class gRPCServiceImpl final : public gRPCService::Service {
-    //    Status open(ServerContext *context, const ClientRequest *req,
-    //    ServerResponse *reply) override {
-    //        int fd = open(req->path(), req->flag());
-    //        reply->set_value(fd);
-    //        Stat* stat_reply;
-    //        stat(context, req, stat_reply);
-    //        reply->set_version(stat_reply->mtime());
-    //        return Status::OK;
-    //    }
+   private:
+    static std::string to_server_path(const std::string &path) {
+        return (SERVER_FOLDER + path);
+    }
 
-    Status creat(ServerContext *context, const ClientRequest *req,
-                 ServerResponse *reply) override {
-        std::cout << "Called creat " << req->path() << std::endl;
-        int fd = ::open(req->path().c_str(), req->flag());
-        std::cout << fd << std::endl;
-        reply->set_fd(std::to_string(fd));
-        //        Stat* stat_reply;
-        //        stat(context, req, stat_reply);
-        //        reply->set_version(stat_reply->mtime());
+    Status s_getattr(ServerContext *context, const afs::PathRequest *req,
+                     afs::GetAttrResponse *reply) override {
+        struct stat st;
+        int ret = lstat(to_server_path(req->path()).c_str(), &st);
+        if (ret == -1) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
+        reply->set_ret(ret);
+
+        auto stat = std::make_unique<afs::Stat>();
+        stat->set_dev(st.st_dev);
+        stat->set_ino(st.st_ino);
+        stat->set_mode(st.st_mode);
+        stat->set_nlink(st.st_nlink);
+        stat->set_uid(st.st_uid);
+        stat->set_gid(st.st_gid);
+        stat->set_rdev(st.st_rdev);
+        stat->set_size(st.st_size);
+        stat->set_blksize(st.st_blksize);
+        stat->set_blocks(st.st_blocks);
+        stat->set_atime(st.st_atime);
+        stat->set_mtime(st.st_mtime);
+        stat->set_ctime(st.st_ctime);
+
+        reply->set_allocated_stat(stat.release());
         return Status::OK;
     }
 
-    //    Status stat(ServerContext *context, const ClientRequest *req, Stat
-    //    *reply) override {
-    //        struct stat buf;
-    //        stat(req->path, &buf);
-    //        reply->set_file_size(buf.st_size);
-    //        reply->set_mtime(buf.st_mtimespec.tv_sec);
-    //        return Status::OK;
-    //    }
-
-    //    Status mkdir(ServerContext* context, const ClientRequest* req, Int*
-    //    reply) override {
-    //        reply->set_value(::mkdir(req->path().c_str(), req->flag()));
-    //        set_time(reply->mutable_ts(),
-    //        get_stat(req->path().c_str()).st_mtim); return Status::OK;
-    //    }
-
-    //    Status rmdir(ServerContext* context, const PathNFlag* req, Int* reply)
-    //    override {
-    //        reply->set_value(::rmdir(req->path().c_str()));
-    //        return Status::OK;
-    //    }
-    //
-    //    Status unlink() {
-    //
-    //    }
-    //
-    //    Status close() {
-    //
-    //    }
+    Status s_readdir(ServerContext *context, const afs::PathRequest *req,
+                     afs::ReadDirResponse *reply) override {
+        DIR *dp;
+        struct dirent *de;
+        dp = opendir(to_server_path(req->path()).c_str());
+        if (dp == NULL) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
+        while ((de = readdir(dp)) != NULL) {
+            reply->add_entries(de->d_name);
+        }
+        closedir(dp);
+        return Status::OK;
+    }
 };
 
 int main() {

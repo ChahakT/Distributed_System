@@ -1,32 +1,36 @@
 syntax = "proto3";
 
-package tutorial;
+package afs;
 
-message Request {
-    int32 msg = 1;
+message Stat {
+  uint64 dev = 1;     /* ID of device containing file */
+  uint64 ino = 2;     /* Inode number */
+  uint64 mode = 3;    /* File type and mode */
+  uint64 nlink = 4;   /* Number of hard links */
+  uint64 uid = 5;     /* User ID of owner */
+  uint64 gid = 6;     /* Group ID of owner */
+  uint64 rdev = 7;    /* Device ID (if special file) */
+  uint64 size = 8;    /* Total size, in bytes */
+  uint64 blksize = 9; /* Block size for filesystem I/O */
+  uint64 blocks = 10; /* Number of 512B blocks allocated */
+  uint64 atime = 11;
+  uint64 mtime = 12;
+  uint64 ctime = 13;
 }
 
-message ClientRequest {
-	string path = 1;
-	int32 flag = 2;
+message PathRequest { string path = 1; }
+
+message GetAttrResponse {
+  int32 ret = 1;
+  Stat stat = 2;
 }
 
-message ServerResponse {
-    string fd = 1;
-}
-
-message Stat{
-    uint64 file_size = 1;
-    uint64 mtime = 2;
+message ReadDirResponse {
+  int32 ret = 1;
+  repeated string entries = 2;
 }
 
 service gRPCService {
-  // rpc open (ClientRequest) returns (ServerResponse) {}
-  rpc creat (ClientRequest) returns (ServerResponse) {}
-  // rpc close (stream File) returns (Int) {}
-  // rpc mkdir (Request) returns (Int) {}
-  // rpc rmdir (Request) returns (Int) {}
-  // rpc stat (ClientRequest) returns (Stat) {}
-  // rpc open (Request) returns (stream File) {}
-  // rpc unlink (ClientRequest) returns () {}
+  rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
+  rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
 }

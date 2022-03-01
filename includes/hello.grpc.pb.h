@@ -26,39 +26,58 @@
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
-namespace tutorial {
+namespace afs {
 
 class gRPCService final {
  public:
   static constexpr char const* service_full_name() {
-    return "tutorial.gRPCService";
+    return "afs.gRPCService";
   }
   class StubInterface {
    public:
     virtual ~StubInterface() {}
     // rpc open (ClientRequest) returns (ServerResponse) {}
-    virtual ::grpc::Status creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::tutorial::ServerResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>> Asynccreat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>>(AsynccreatRaw(context, request, cq));
+    virtual ::grpc::Status s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::GetAttrResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>> Asyncs_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>>(Asyncs_getattrRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>> PrepareAsynccreat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>>(PrepareAsynccreatRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>> PrepareAsyncs_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>>(PrepareAsyncs_getattrRaw(context, request, cq));
+    }
+    virtual ::grpc::Status s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::ReadDirResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>> Asyncs_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>>(Asyncs_readdirRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>> PrepareAsyncs_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>>(PrepareAsyncs_readdirRaw(context, request, cq));
     }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
       // rpc open (ClientRequest) returns (ServerResponse) {}
-      virtual void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -69,33 +88,54 @@ class gRPCService final {
     #endif
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>* AsynccreatRaw(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::tutorial::ServerResponse>* PrepareAsynccreatRaw(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>* Asyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::afs::GetAttrResponse>* PrepareAsyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>* Asyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::afs::ReadDirResponse>* PrepareAsyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
-    ::grpc::Status creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::tutorial::ServerResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>> Asynccreat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>>(AsynccreatRaw(context, request, cq));
+    ::grpc::Status s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::GetAttrResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>> Asyncs_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>>(Asyncs_getattrRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>> PrepareAsynccreat(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>>(PrepareAsynccreatRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>> PrepareAsyncs_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>>(PrepareAsyncs_getattrRaw(context, request, cq));
+    }
+    ::grpc::Status s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::ReadDirResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>> Asyncs_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>>(Asyncs_readdirRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>> PrepareAsyncs_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>>(PrepareAsyncs_readdirRaw(context, request, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
-      void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, std::function<void(::grpc::Status)>) override;
-      void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, std::function<void(::grpc::Status)>) override;
+      void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)>) override;
+      void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void creat(::grpc::ClientContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void creat(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::tutorial::ServerResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)>) override;
+      void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -108,9 +148,12 @@ class gRPCService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>* AsynccreatRaw(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::tutorial::ServerResponse>* PrepareAsynccreatRaw(::grpc::ClientContext* context, const ::tutorial::ClientRequest& request, ::grpc::CompletionQueue* cq) override;
-    const ::grpc::internal::RpcMethod rpcmethod_creat_;
+    ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>* Asyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>* PrepareAsyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>* Asyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>* PrepareAsyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_s_getattr_;
+    const ::grpc::internal::RpcMethod rpcmethod_s_readdir_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -119,124 +162,229 @@ class gRPCService final {
     Service();
     virtual ~Service();
     // rpc open (ClientRequest) returns (ServerResponse) {}
-    virtual ::grpc::Status creat(::grpc::ServerContext* context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response);
+    virtual ::grpc::Status s_getattr(::grpc::ServerContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response);
+    virtual ::grpc::Status s_readdir(::grpc::ServerContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response);
   };
   template <class BaseClass>
-  class WithAsyncMethod_creat : public BaseClass {
+  class WithAsyncMethod_s_getattr : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_creat() {
+    WithAsyncMethod_s_getattr() {
       ::grpc::Service::MarkMethodAsync(0);
     }
-    ~WithAsyncMethod_creat() override {
+    ~WithAsyncMethod_s_getattr() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Requestcreat(::grpc::ServerContext* context, ::tutorial::ClientRequest* request, ::grpc::ServerAsyncResponseWriter< ::tutorial::ServerResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Requests_getattr(::grpc::ServerContext* context, ::afs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::afs::GetAttrResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_creat<Service > AsyncService;
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_creat : public BaseClass {
+  class WithAsyncMethod_s_readdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithCallbackMethod_creat() {
+    WithAsyncMethod_s_readdir() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_s_readdir() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_readdir(::grpc::ServerContext* context, ::afs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::afs::ReadDirResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_s_getattr<WithAsyncMethod_s_readdir<Service > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_s_getattr : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_s_getattr() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(0,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::tutorial::ClientRequest, ::tutorial::ServerResponse>(
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::afs::PathRequest, ::afs::GetAttrResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::tutorial::ClientRequest* request, ::tutorial::ServerResponse* response) { return this->creat(context, request, response); }));}
-    void SetMessageAllocatorFor_creat(
-        ::grpc::experimental::MessageAllocator< ::tutorial::ClientRequest, ::tutorial::ServerResponse>* allocator) {
+                     context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response) { return this->s_getattr(context, request, response); }));}
+    void SetMessageAllocatorFor_s_getattr(
+        ::grpc::experimental::MessageAllocator< ::afs::PathRequest, ::afs::GetAttrResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::tutorial::ClientRequest, ::tutorial::ServerResponse>*>(handler)
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::afs::PathRequest, ::afs::GetAttrResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~ExperimentalWithCallbackMethod_creat() override {
+    ~ExperimentalWithCallbackMethod_s_getattr() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* creat(
-      ::grpc::CallbackServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/)
+    virtual ::grpc::ServerUnaryReactor* s_getattr(
+      ::grpc::CallbackServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* creat(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/)
+    virtual ::grpc::experimental::ServerUnaryReactor* s_getattr(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_s_readdir : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_s_readdir() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(1,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::afs::PathRequest, ::afs::ReadDirResponse>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response) { return this->s_readdir(context, request, response); }));}
+    void SetMessageAllocatorFor_s_readdir(
+        ::grpc::experimental::MessageAllocator< ::afs::PathRequest, ::afs::ReadDirResponse>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(1);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::afs::PathRequest, ::afs::ReadDirResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_s_readdir() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* s_readdir(
+      ::grpc::CallbackServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* s_readdir(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/)
     #endif
       { return nullptr; }
   };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod_creat<Service > CallbackService;
+  typedef ExperimentalWithCallbackMethod_s_getattr<ExperimentalWithCallbackMethod_s_readdir<Service > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod_creat<Service > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod_s_getattr<ExperimentalWithCallbackMethod_s_readdir<Service > > ExperimentalCallbackService;
   template <class BaseClass>
-  class WithGenericMethod_creat : public BaseClass {
+  class WithGenericMethod_s_getattr : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_creat() {
+    WithGenericMethod_s_getattr() {
       ::grpc::Service::MarkMethodGeneric(0);
     }
-    ~WithGenericMethod_creat() override {
+    ~WithGenericMethod_s_getattr() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithRawMethod_creat : public BaseClass {
+  class WithGenericMethod_s_readdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_creat() {
-      ::grpc::Service::MarkMethodRaw(0);
+    WithGenericMethod_s_readdir() {
+      ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithRawMethod_creat() override {
+    ~WithGenericMethod_s_readdir() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Requestcreat(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  };
+  template <class BaseClass>
+  class WithRawMethod_s_getattr : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_s_getattr() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_s_getattr() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_getattr(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_creat : public BaseClass {
+  class WithRawMethod_s_readdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithRawCallbackMethod_creat() {
+    WithRawMethod_s_readdir() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_s_readdir() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_readdir(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_s_getattr : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_s_getattr() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
@@ -250,51 +398,109 @@ class gRPCService final {
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->creat(context, request, response); }));
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_getattr(context, request, response); }));
     }
-    ~ExperimentalWithRawCallbackMethod_creat() override {
+    ~ExperimentalWithRawCallbackMethod_s_getattr() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* creat(
+    virtual ::grpc::ServerUnaryReactor* s_getattr(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* creat(
+    virtual ::grpc::experimental::ServerUnaryReactor* s_getattr(
       ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
     #endif
       { return nullptr; }
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_creat : public BaseClass {
+  class ExperimentalWithRawCallbackMethod_s_readdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_creat() {
-      ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler< ::tutorial::ClientRequest, ::tutorial::ServerResponse>(std::bind(&WithStreamedUnaryMethod_creat<BaseClass>::Streamedcreat, this, std::placeholders::_1, std::placeholders::_2)));
+    ExperimentalWithRawCallbackMethod_s_readdir() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(1,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_readdir(context, request, response); }));
     }
-    ~WithStreamedUnaryMethod_creat() override {
+    ~ExperimentalWithRawCallbackMethod_s_readdir() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* s_readdir(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* s_readdir(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_s_getattr : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_s_getattr() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler< ::afs::PathRequest, ::afs::GetAttrResponse>(std::bind(&WithStreamedUnaryMethod_s_getattr<BaseClass>::Streameds_getattr, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_s_getattr() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status creat(::grpc::ServerContext* /*context*/, const ::tutorial::ClientRequest* /*request*/, ::tutorial::ServerResponse* /*response*/) override {
+    ::grpc::Status s_getattr(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::GetAttrResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status Streamedcreat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::tutorial::ClientRequest,::tutorial::ServerResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status Streameds_getattr(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::afs::PathRequest,::afs::GetAttrResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_creat<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_s_readdir : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_s_readdir() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler< ::afs::PathRequest, ::afs::ReadDirResponse>(std::bind(&WithStreamedUnaryMethod_s_readdir<BaseClass>::Streameds_readdir, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_s_readdir() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status s_readdir(::grpc::ServerContext* /*context*/, const ::afs::PathRequest* /*request*/, ::afs::ReadDirResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streameds_readdir(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::afs::PathRequest,::afs::ReadDirResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_creat<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<Service > > StreamedService;
 };
 
-}  // namespace tutorial
+}  // namespace afs
 
 
 #endif  // GRPC_hello_2eproto__INCLUDED
