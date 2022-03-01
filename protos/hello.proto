@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package tutorial;
+
+message Request {
+    int32 msg = 1;
+}
+
+message ClientRequest {
+	string path = 1;
+	int32 flag = 2;
+}
+
+message ServerResponse {
+    string fd = 1;
+}
+
+message Stat{
+    uint64 file_size = 1;
+    uint64 mtime = 2;
+}
+
+service gRPCService {
+  // rpc open (ClientRequest) returns (ServerResponse) {}
+  rpc creat (ClientRequest) returns (ServerResponse) {}
+  // rpc close (stream File) returns (Int) {}
+  // rpc mkdir (Request) returns (Int) {}
+  // rpc rmdir (Request) returns (Int) {}
+  // rpc stat (ClientRequest) returns (Stat) {}
+  // rpc open (Request) returns (stream File) {}
+  // rpc unlink (ClientRequest) returns () {}
+}
