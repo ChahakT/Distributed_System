@@ -26,8 +26,17 @@ make -j
         ...
     }
     ```
-3. Define a new protobuf in `protos/hello.proto` if needed
-    - Compile protobuf by running `./run_proto.sh`
+3. Define new protobuf in `protos/hello.proto` if needed
+    - Compile protobuf by running `./gen_proto.sh`
+    ```protobuf
+    message PathRequest { string path = 1; }
+    message GetAttrResponse {
+        int32 ret = 1;
+        Stat stat = 2;
+    }
+    rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
+    ```
+
 4. Implement client function in `client_grpc.cpp`
     ```cpp
     class GRPCClient {

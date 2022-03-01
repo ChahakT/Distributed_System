@@ -28,82 +28,82 @@ static const char* gRPCService_method_names[] = {
 
 std::unique_ptr< gRPCService::Stub> gRPCService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
   (void)options;
-  std::unique_ptr< gRPCService::Stub> stub(new gRPCService::Stub(channel));
+  std::unique_ptr< gRPCService::Stub> stub(new gRPCService::Stub(channel, options));
   return stub;
 }
 
-gRPCService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_s_getattr_(gRPCService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_s_readdir_(gRPCService_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+gRPCService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_s_getattr_(gRPCService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_readdir_(gRPCService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status gRPCService::Stub::s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::GetAttrResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_s_getattr_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall< ::afs::PathRequest, ::afs::GetAttrResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_s_getattr_, context, request, response);
 }
 
-void gRPCService::Stub::experimental_async::s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, std::move(f));
+void gRPCService::Stub::async::s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::afs::PathRequest, ::afs::GetAttrResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, std::move(f));
 }
 
-void gRPCService::Stub::experimental_async::s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, std::move(f));
-}
-
-void gRPCService::Stub::experimental_async::s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, reactor);
-}
-
-void gRPCService::Stub::experimental_async::s_getattr(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::GetAttrResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>* gRPCService::Stub::Asyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::afs::GetAttrResponse>::Create(channel_.get(), cq, rpcmethod_s_getattr_, context, request, true);
+void gRPCService::Stub::async::s_getattr(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_getattr_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>* gRPCService::Stub::PrepareAsyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::afs::GetAttrResponse>::Create(channel_.get(), cq, rpcmethod_s_getattr_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::afs::GetAttrResponse, ::afs::PathRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_s_getattr_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::afs::GetAttrResponse>* gRPCService::Stub::Asyncs_getattrRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncs_getattrRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 ::grpc::Status gRPCService::Stub::s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::afs::ReadDirResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_s_readdir_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall< ::afs::PathRequest, ::afs::ReadDirResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_s_readdir_, context, request, response);
 }
 
-void gRPCService::Stub::experimental_async::s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, std::move(f));
+void gRPCService::Stub::async::s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::afs::PathRequest, ::afs::ReadDirResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, std::move(f));
 }
 
-void gRPCService::Stub::experimental_async::s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, std::move(f));
-}
-
-void gRPCService::Stub::experimental_async::s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, reactor);
-}
-
-void gRPCService::Stub::experimental_async::s_readdir(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::afs::ReadDirResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>* gRPCService::Stub::Asyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::afs::ReadDirResponse>::Create(channel_.get(), cq, rpcmethod_s_readdir_, context, request, true);
+void gRPCService::Stub::async::s_readdir(::grpc::ClientContext* context, const ::afs::PathRequest* request, ::afs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_readdir_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>* gRPCService::Stub::PrepareAsyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::afs::ReadDirResponse>::Create(channel_.get(), cq, rpcmethod_s_readdir_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::afs::ReadDirResponse, ::afs::PathRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_s_readdir_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::afs::ReadDirResponse>* gRPCService::Stub::Asyncs_readdirRaw(::grpc::ClientContext* context, const ::afs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncs_readdirRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 gRPCService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::afs::PathRequest, ::afs::GetAttrResponse>(
-          std::mem_fn(&gRPCService::Service::s_getattr), this)));
+      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::afs::PathRequest, ::afs::GetAttrResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](gRPCService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::afs::PathRequest* req,
+             ::afs::GetAttrResponse* resp) {
+               return service->s_getattr(ctx, req, resp);
+             }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::afs::PathRequest, ::afs::ReadDirResponse>(
-          std::mem_fn(&gRPCService::Service::s_readdir), this)));
+      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::afs::PathRequest, ::afs::ReadDirResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](gRPCService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::afs::PathRequest* req,
+             ::afs::ReadDirResponse* resp) {
+               return service->s_readdir(ctx, req, resp);
+             }, this)));
 }
 
 gRPCService::Service::~Service() {
