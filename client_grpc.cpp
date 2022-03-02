@@ -25,17 +25,17 @@ using grpc::Status;
     }
 #define GET_PDATA static_cast<PrivateData *>(fuse_get_context()->private_data)
 
-#define CLINET_CACHE_FOLDER "./aafs_client_cache/"
-#define CLINET_TRANSFER_TEMPLATE "./aafs_transferXXXXXX"
+#define CLIENT_CACHE_FOLDER "./aafs_client_cache/"
+#define CLIENT_TRANSFER_TEMPLATE "./aafs_transferXXXXXX"
 
 class GRPCClient {
    private:
     static std::string to_cache_path(const std::string &path) {
-        return (CLINET_CACHE_FOLDER + path);
+        return (CLIENT_CACHE_FOLDER + path);
     }
 
     static std::pair<int, std::string> get_tmp_file() {
-        char tmpla[] = CLINET_TRANSFER_TEMPLATE;
+        char tmpla[] = CLIENT_TRANSFER_TEMPLATE;
         int ret = mkstemp(tmpla);
         return std::make_pair(ret, tmpla);
     }
@@ -43,7 +43,7 @@ class GRPCClient {
    public:
     explicit GRPCClient(const std::shared_ptr<Channel> &channel)
         : stub_(gRPCService::NewStub(channel)) {
-        int ret = mkdir(CLINET_CACHE_FOLDER, 0755);
+        int ret = mkdir(CLIENT_CACHE_FOLDER, 0755);
         if (ret != 0 && errno != EEXIST) {
             assert_perror(errno);
         }
