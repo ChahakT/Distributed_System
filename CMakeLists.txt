@@ -25,7 +25,7 @@ target_link_libraries(server ${FUSE_LIBRARIES})
 
 
 find_package(OpenSSL REQUIRED)
-add_executable(client client.cpp includes/hello.pb.cc includes/hello.grpc.pb.cc)
+add_executable(client client.cpp client_grpc.cpp includes/hello.pb.cc includes/hello.grpc.pb.cc)
 target_link_libraries(client grpc++)
 target_link_libraries(client OpenSSL::SSL)
 target_link_libraries(client ${FUSE_LIBRARIES})

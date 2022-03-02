@@ -46,14 +46,17 @@ struct TableStruct_hello_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_hello_2eproto;
-namespace afs {
+namespace aafs {
+class FileContent;
+struct FileContentDefaultTypeInternal;
+extern FileContentDefaultTypeInternal _FileContent_default_instance_;
 class GetAttrResponse;
 struct GetAttrResponseDefaultTypeInternal;
 extern GetAttrResponseDefaultTypeInternal _GetAttrResponse_default_instance_;
@@ -66,19 +69,20 @@ extern ReadDirResponseDefaultTypeInternal _ReadDirResponse_default_instance_;
 class Stat;
 struct StatDefaultTypeInternal;
 extern StatDefaultTypeInternal _Stat_default_instance_;
-}  // namespace afs
+}  // namespace aafs
 PROTOBUF_NAMESPACE_OPEN
-template<> ::afs::GetAttrResponse* Arena::CreateMaybeMessage<::afs::GetAttrResponse>(Arena*);
-template<> ::afs::PathRequest* Arena::CreateMaybeMessage<::afs::PathRequest>(Arena*);
-template<> ::afs::ReadDirResponse* Arena::CreateMaybeMessage<::afs::ReadDirResponse>(Arena*);
-template<> ::afs::Stat* Arena::CreateMaybeMessage<::afs::Stat>(Arena*);
+template<> ::aafs::FileContent* Arena::CreateMaybeMessage<::aafs::FileContent>(Arena*);
+template<> ::aafs::GetAttrResponse* Arena::CreateMaybeMessage<::aafs::GetAttrResponse>(Arena*);
+template<> ::aafs::PathRequest* Arena::CreateMaybeMessage<::aafs::PathRequest>(Arena*);
+template<> ::aafs::ReadDirResponse* Arena::CreateMaybeMessage<::aafs::ReadDirResponse>(Arena*);
+template<> ::aafs::Stat* Arena::CreateMaybeMessage<::aafs::Stat>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace afs {
+namespace aafs {
 
 // ===================================================================
 
 class Stat final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:afs.Stat) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.Stat) */ {
  public:
   inline Stat() : Stat(nullptr) {}
   ~Stat() override;
@@ -179,7 +183,7 @@ class Stat final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "afs.Stat";
+    return "aafs.Stat";
   }
   protected:
   explicit Stat(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -199,30 +203,19 @@ class Stat final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDevFieldNumber = 1,
-    kInoFieldNumber = 2,
-    kModeFieldNumber = 3,
-    kNlinkFieldNumber = 4,
-    kUidFieldNumber = 5,
-    kGidFieldNumber = 6,
-    kRdevFieldNumber = 7,
-    kSizeFieldNumber = 8,
-    kBlksizeFieldNumber = 9,
-    kBlocksFieldNumber = 10,
-    kAtimeFieldNumber = 11,
-    kMtimeFieldNumber = 12,
-    kCtimeFieldNumber = 13,
+    kInoFieldNumber = 1,
+    kModeFieldNumber = 2,
+    kNlinkFieldNumber = 3,
+    kUidFieldNumber = 4,
+    kGidFieldNumber = 5,
+    kRdevFieldNumber = 6,
+    kSizeFieldNumber = 7,
+    kBlocksFieldNumber = 8,
+    kAtimeFieldNumber = 9,
+    kMtimeFieldNumber = 10,
+    kCtimeFieldNumber = 11,
   };
-  // uint64 dev = 1;
-  void clear_dev();
-  uint64_t dev() const;
-  void set_dev(uint64_t value);
-  private:
-  uint64_t _internal_dev() const;
-  void _internal_set_dev(uint64_t value);
-  public:
-
-  // uint64 ino = 2;
+  // uint64 ino = 1;
   void clear_ino();
   uint64_t ino() const;
   void set_ino(uint64_t value);
@@ -231,7 +224,7 @@ class Stat final :
   void _internal_set_ino(uint64_t value);
   public:
 
-  // uint64 mode = 3;
+  // uint64 mode = 2;
   void clear_mode();
   uint64_t mode() const;
   void set_mode(uint64_t value);
@@ -240,7 +233,7 @@ class Stat final :
   void _internal_set_mode(uint64_t value);
   public:
 
-  // uint64 nlink = 4;
+  // uint64 nlink = 3;
   void clear_nlink();
   uint64_t nlink() const;
   void set_nlink(uint64_t value);
@@ -249,7 +242,7 @@ class Stat final :
   void _internal_set_nlink(uint64_t value);
   public:
 
-  // uint64 uid = 5;
+  // uint64 uid = 4;
   void clear_uid();
   uint64_t uid() const;
   void set_uid(uint64_t value);
@@ -258,7 +251,7 @@ class Stat final :
   void _internal_set_uid(uint64_t value);
   public:
 
-  // uint64 gid = 6;
+  // uint64 gid = 5;
   void clear_gid();
   uint64_t gid() const;
   void set_gid(uint64_t value);
@@ -267,7 +260,7 @@ class Stat final :
   void _internal_set_gid(uint64_t value);
   public:
 
-  // uint64 rdev = 7;
+  // uint64 rdev = 6;
   void clear_rdev();
   uint64_t rdev() const;
   void set_rdev(uint64_t value);
@@ -276,87 +269,76 @@ class Stat final :
   void _internal_set_rdev(uint64_t value);
   public:
 
-  // uint64 size = 8;
+  // int64 size = 7;
   void clear_size();
-  uint64_t size() const;
-  void set_size(uint64_t value);
+  int64_t size() const;
+  void set_size(int64_t value);
   private:
-  uint64_t _internal_size() const;
-  void _internal_set_size(uint64_t value);
+  int64_t _internal_size() const;
+  void _internal_set_size(int64_t value);
   public:
 
-  // uint64 blksize = 9;
-  void clear_blksize();
-  uint64_t blksize() const;
-  void set_blksize(uint64_t value);
-  private:
-  uint64_t _internal_blksize() const;
-  void _internal_set_blksize(uint64_t value);
-  public:
-
-  // uint64 blocks = 10;
+  // int64 blocks = 8;
   void clear_blocks();
-  uint64_t blocks() const;
-  void set_blocks(uint64_t value);
+  int64_t blocks() const;
+  void set_blocks(int64_t value);
   private:
-  uint64_t _internal_blocks() const;
-  void _internal_set_blocks(uint64_t value);
+  int64_t _internal_blocks() const;
+  void _internal_set_blocks(int64_t value);
   public:
 
-  // uint64 atime = 11;
+  // int64 atime = 9;
   void clear_atime();
-  uint64_t atime() const;
-  void set_atime(uint64_t value);
+  int64_t atime() const;
+  void set_atime(int64_t value);
   private:
-  uint64_t _internal_atime() const;
-  void _internal_set_atime(uint64_t value);
+  int64_t _internal_atime() const;
+  void _internal_set_atime(int64_t value);
   public:
 
-  // uint64 mtime = 12;
+  // int64 mtime = 10;
   void clear_mtime();
-  uint64_t mtime() const;
-  void set_mtime(uint64_t value);
+  int64_t mtime() const;
+  void set_mtime(int64_t value);
   private:
-  uint64_t _internal_mtime() const;
-  void _internal_set_mtime(uint64_t value);
+  int64_t _internal_mtime() const;
+  void _internal_set_mtime(int64_t value);
   public:
 
-  // uint64 ctime = 13;
+  // int64 ctime = 11;
   void clear_ctime();
-  uint64_t ctime() const;
-  void set_ctime(uint64_t value);
+  int64_t ctime() const;
+  void set_ctime(int64_t value);
   private:
-  uint64_t _internal_ctime() const;
-  void _internal_set_ctime(uint64_t value);
+  int64_t _internal_ctime() const;
+  void _internal_set_ctime(int64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:afs.Stat)
+  // @@protoc_insertion_point(class_scope:aafs.Stat)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  uint64_t dev_;
   uint64_t ino_;
   uint64_t mode_;
   uint64_t nlink_;
   uint64_t uid_;
   uint64_t gid_;
   uint64_t rdev_;
-  uint64_t size_;
-  uint64_t blksize_;
-  uint64_t blocks_;
-  uint64_t atime_;
-  uint64_t mtime_;
-  uint64_t ctime_;
+  int64_t size_;
+  int64_t blocks_;
+  int64_t atime_;
+  int64_t mtime_;
+  int64_t ctime_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_hello_2eproto;
 };
 // -------------------------------------------------------------------
 
 class PathRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:afs.PathRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.PathRequest) */ {
  public:
   inline PathRequest() : PathRequest(nullptr) {}
   ~PathRequest() override;
@@ -457,7 +439,7 @@ class PathRequest final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "afs.PathRequest";
+    return "aafs.PathRequest";
   }
   protected:
   explicit PathRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -493,7 +475,7 @@ class PathRequest final :
   std::string* _internal_mutable_path();
   public:
 
-  // @@protoc_insertion_point(class_scope:afs.PathRequest)
+  // @@protoc_insertion_point(class_scope:aafs.PathRequest)
  private:
   class _Internal;
 
@@ -507,7 +489,7 @@ class PathRequest final :
 // -------------------------------------------------------------------
 
 class GetAttrResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:afs.GetAttrResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.GetAttrResponse) */ {
  public:
   inline GetAttrResponse() : GetAttrResponse(nullptr) {}
   ~GetAttrResponse() override;
@@ -608,7 +590,7 @@ class GetAttrResponse final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "afs.GetAttrResponse";
+    return "aafs.GetAttrResponse";
   }
   protected:
   explicit GetAttrResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -631,23 +613,23 @@ class GetAttrResponse final :
     kStatFieldNumber = 2,
     kRetFieldNumber = 1,
   };
-  // .afs.Stat stat = 2;
+  // .aafs.Stat stat = 2;
   bool has_stat() const;
   private:
   bool _internal_has_stat() const;
   public:
   void clear_stat();
-  const ::afs::Stat& stat() const;
-  PROTOBUF_NODISCARD ::afs::Stat* release_stat();
-  ::afs::Stat* mutable_stat();
-  void set_allocated_stat(::afs::Stat* stat);
+  const ::aafs::Stat& stat() const;
+  PROTOBUF_NODISCARD ::aafs::Stat* release_stat();
+  ::aafs::Stat* mutable_stat();
+  void set_allocated_stat(::aafs::Stat* stat);
   private:
-  const ::afs::Stat& _internal_stat() const;
-  ::afs::Stat* _internal_mutable_stat();
+  const ::aafs::Stat& _internal_stat() const;
+  ::aafs::Stat* _internal_mutable_stat();
   public:
   void unsafe_arena_set_allocated_stat(
-      ::afs::Stat* stat);
-  ::afs::Stat* unsafe_arena_release_stat();
+      ::aafs::Stat* stat);
+  ::aafs::Stat* unsafe_arena_release_stat();
 
   // int32 ret = 1;
   void clear_ret();
@@ -658,14 +640,14 @@ class GetAttrResponse final :
   void _internal_set_ret(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:afs.GetAttrResponse)
+  // @@protoc_insertion_point(class_scope:aafs.GetAttrResponse)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::afs::Stat* stat_;
+  ::aafs::Stat* stat_;
   int32_t ret_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_hello_2eproto;
@@ -673,7 +655,7 @@ class GetAttrResponse final :
 // -------------------------------------------------------------------
 
 class ReadDirResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:afs.ReadDirResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.ReadDirResponse) */ {
  public:
   inline ReadDirResponse() : ReadDirResponse(nullptr) {}
   ~ReadDirResponse() override;
@@ -774,7 +756,7 @@ class ReadDirResponse final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "afs.ReadDirResponse";
+    return "aafs.ReadDirResponse";
   }
   protected:
   explicit ReadDirResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -830,7 +812,7 @@ class ReadDirResponse final :
   void _internal_set_ret(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:afs.ReadDirResponse)
+  // @@protoc_insertion_point(class_scope:aafs.ReadDirResponse)
  private:
   class _Internal;
 
@@ -839,6 +821,157 @@ class ReadDirResponse final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> entries_;
   int32_t ret_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_hello_2eproto;
+};
+// -------------------------------------------------------------------
+
+class FileContent final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.FileContent) */ {
+ public:
+  inline FileContent() : FileContent(nullptr) {}
+  ~FileContent() override;
+  explicit constexpr FileContent(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  FileContent(const FileContent& from);
+  FileContent(FileContent&& from) noexcept
+    : FileContent() {
+    *this = ::std::move(from);
+  }
+
+  inline FileContent& operator=(const FileContent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline FileContent& operator=(FileContent&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const FileContent& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const FileContent* internal_default_instance() {
+    return reinterpret_cast<const FileContent*>(
+               &_FileContent_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(FileContent& a, FileContent& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(FileContent* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(FileContent* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  FileContent* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<FileContent>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const FileContent& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const FileContent& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(FileContent* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "aafs.FileContent";
+  }
+  protected:
+  explicit FileContent(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDataFieldNumber = 1,
+  };
+  // bytes data = 1;
+  void clear_data();
+  const std::string& data() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_data(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_data();
+  PROTOBUF_NODISCARD std::string* release_data();
+  void set_allocated_data(std::string* data);
+  private:
+  const std::string& _internal_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_data(const std::string& value);
+  std::string* _internal_mutable_data();
+  public:
+
+  // @@protoc_insertion_point(class_scope:aafs.FileContent)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_hello_2eproto;
 };
@@ -853,27 +986,7 @@ class ReadDirResponse final :
 #endif  // __GNUC__
 // Stat
 
-// uint64 dev = 1;
-inline void Stat::clear_dev() {
-  dev_ = uint64_t{0u};
-}
-inline uint64_t Stat::_internal_dev() const {
-  return dev_;
-}
-inline uint64_t Stat::dev() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.dev)
-  return _internal_dev();
-}
-inline void Stat::_internal_set_dev(uint64_t value) {
-  
-  dev_ = value;
-}
-inline void Stat::set_dev(uint64_t value) {
-  _internal_set_dev(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.dev)
-}
-
-// uint64 ino = 2;
+// uint64 ino = 1;
 inline void Stat::clear_ino() {
   ino_ = uint64_t{0u};
 }
@@ -881,7 +994,7 @@ inline uint64_t Stat::_internal_ino() const {
   return ino_;
 }
 inline uint64_t Stat::ino() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.ino)
+  // @@protoc_insertion_point(field_get:aafs.Stat.ino)
   return _internal_ino();
 }
 inline void Stat::_internal_set_ino(uint64_t value) {
@@ -890,10 +1003,10 @@ inline void Stat::_internal_set_ino(uint64_t value) {
 }
 inline void Stat::set_ino(uint64_t value) {
   _internal_set_ino(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.ino)
+  // @@protoc_insertion_point(field_set:aafs.Stat.ino)
 }
 
-// uint64 mode = 3;
+// uint64 mode = 2;
 inline void Stat::clear_mode() {
   mode_ = uint64_t{0u};
 }
@@ -901,7 +1014,7 @@ inline uint64_t Stat::_internal_mode() const {
   return mode_;
 }
 inline uint64_t Stat::mode() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.mode)
+  // @@protoc_insertion_point(field_get:aafs.Stat.mode)
   return _internal_mode();
 }
 inline void Stat::_internal_set_mode(uint64_t value) {
@@ -910,10 +1023,10 @@ inline void Stat::_internal_set_mode(uint64_t value) {
 }
 inline void Stat::set_mode(uint64_t value) {
   _internal_set_mode(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.mode)
+  // @@protoc_insertion_point(field_set:aafs.Stat.mode)
 }
 
-// uint64 nlink = 4;
+// uint64 nlink = 3;
 inline void Stat::clear_nlink() {
   nlink_ = uint64_t{0u};
 }
@@ -921,7 +1034,7 @@ inline uint64_t Stat::_internal_nlink() const {
   return nlink_;
 }
 inline uint64_t Stat::nlink() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.nlink)
+  // @@protoc_insertion_point(field_get:aafs.Stat.nlink)
   return _internal_nlink();
 }
 inline void Stat::_internal_set_nlink(uint64_t value) {
@@ -930,10 +1043,10 @@ inline void Stat::_internal_set_nlink(uint64_t value) {
 }
 inline void Stat::set_nlink(uint64_t value) {
   _internal_set_nlink(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.nlink)
+  // @@protoc_insertion_point(field_set:aafs.Stat.nlink)
 }
 
-// uint64 uid = 5;
+// uint64 uid = 4;
 inline void Stat::clear_uid() {
   uid_ = uint64_t{0u};
 }
@@ -941,7 +1054,7 @@ inline uint64_t Stat::_internal_uid() const {
   return uid_;
 }
 inline uint64_t Stat::uid() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.uid)
+  // @@protoc_insertion_point(field_get:aafs.Stat.uid)
   return _internal_uid();
 }
 inline void Stat::_internal_set_uid(uint64_t value) {
@@ -950,10 +1063,10 @@ inline void Stat::_internal_set_uid(uint64_t value) {
 }
 inline void Stat::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.uid)
+  // @@protoc_insertion_point(field_set:aafs.Stat.uid)
 }
 
-// uint64 gid = 6;
+// uint64 gid = 5;
 inline void Stat::clear_gid() {
   gid_ = uint64_t{0u};
 }
@@ -961,7 +1074,7 @@ inline uint64_t Stat::_internal_gid() const {
   return gid_;
 }
 inline uint64_t Stat::gid() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.gid)
+  // @@protoc_insertion_point(field_get:aafs.Stat.gid)
   return _internal_gid();
 }
 inline void Stat::_internal_set_gid(uint64_t value) {
@@ -970,10 +1083,10 @@ inline void Stat::_internal_set_gid(uint64_t value) {
 }
 inline void Stat::set_gid(uint64_t value) {
   _internal_set_gid(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.gid)
+  // @@protoc_insertion_point(field_set:aafs.Stat.gid)
 }
 
-// uint64 rdev = 7;
+// uint64 rdev = 6;
 inline void Stat::clear_rdev() {
   rdev_ = uint64_t{0u};
 }
@@ -981,7 +1094,7 @@ inline uint64_t Stat::_internal_rdev() const {
   return rdev_;
 }
 inline uint64_t Stat::rdev() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.rdev)
+  // @@protoc_insertion_point(field_get:aafs.Stat.rdev)
   return _internal_rdev();
 }
 inline void Stat::_internal_set_rdev(uint64_t value) {
@@ -990,127 +1103,107 @@ inline void Stat::_internal_set_rdev(uint64_t value) {
 }
 inline void Stat::set_rdev(uint64_t value) {
   _internal_set_rdev(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.rdev)
+  // @@protoc_insertion_point(field_set:aafs.Stat.rdev)
 }
 
-// uint64 size = 8;
+// int64 size = 7;
 inline void Stat::clear_size() {
-  size_ = uint64_t{0u};
+  size_ = int64_t{0};
 }
-inline uint64_t Stat::_internal_size() const {
+inline int64_t Stat::_internal_size() const {
   return size_;
 }
-inline uint64_t Stat::size() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.size)
+inline int64_t Stat::size() const {
+  // @@protoc_insertion_point(field_get:aafs.Stat.size)
   return _internal_size();
 }
-inline void Stat::_internal_set_size(uint64_t value) {
+inline void Stat::_internal_set_size(int64_t value) {
   
   size_ = value;
 }
-inline void Stat::set_size(uint64_t value) {
+inline void Stat::set_size(int64_t value) {
   _internal_set_size(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.size)
+  // @@protoc_insertion_point(field_set:aafs.Stat.size)
 }
 
-// uint64 blksize = 9;
-inline void Stat::clear_blksize() {
-  blksize_ = uint64_t{0u};
-}
-inline uint64_t Stat::_internal_blksize() const {
-  return blksize_;
-}
-inline uint64_t Stat::blksize() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.blksize)
-  return _internal_blksize();
-}
-inline void Stat::_internal_set_blksize(uint64_t value) {
-  
-  blksize_ = value;
-}
-inline void Stat::set_blksize(uint64_t value) {
-  _internal_set_blksize(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.blksize)
-}
-
-// uint64 blocks = 10;
+// int64 blocks = 8;
 inline void Stat::clear_blocks() {
-  blocks_ = uint64_t{0u};
+  blocks_ = int64_t{0};
 }
-inline uint64_t Stat::_internal_blocks() const {
+inline int64_t Stat::_internal_blocks() const {
   return blocks_;
 }
-inline uint64_t Stat::blocks() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.blocks)
+inline int64_t Stat::blocks() const {
+  // @@protoc_insertion_point(field_get:aafs.Stat.blocks)
   return _internal_blocks();
 }
-inline void Stat::_internal_set_blocks(uint64_t value) {
+inline void Stat::_internal_set_blocks(int64_t value) {
   
   blocks_ = value;
 }
-inline void Stat::set_blocks(uint64_t value) {
+inline void Stat::set_blocks(int64_t value) {
   _internal_set_blocks(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.blocks)
+  // @@protoc_insertion_point(field_set:aafs.Stat.blocks)
 }
 
-// uint64 atime = 11;
+// int64 atime = 9;
 inline void Stat::clear_atime() {
-  atime_ = uint64_t{0u};
+  atime_ = int64_t{0};
 }
-inline uint64_t Stat::_internal_atime() const {
+inline int64_t Stat::_internal_atime() const {
   return atime_;
 }
-inline uint64_t Stat::atime() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.atime)
+inline int64_t Stat::atime() const {
+  // @@protoc_insertion_point(field_get:aafs.Stat.atime)
   return _internal_atime();
 }
-inline void Stat::_internal_set_atime(uint64_t value) {
+inline void Stat::_internal_set_atime(int64_t value) {
   
   atime_ = value;
 }
-inline void Stat::set_atime(uint64_t value) {
+inline void Stat::set_atime(int64_t value) {
   _internal_set_atime(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.atime)
+  // @@protoc_insertion_point(field_set:aafs.Stat.atime)
 }
 
-// uint64 mtime = 12;
+// int64 mtime = 10;
 inline void Stat::clear_mtime() {
-  mtime_ = uint64_t{0u};
+  mtime_ = int64_t{0};
 }
-inline uint64_t Stat::_internal_mtime() const {
+inline int64_t Stat::_internal_mtime() const {
   return mtime_;
 }
-inline uint64_t Stat::mtime() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.mtime)
+inline int64_t Stat::mtime() const {
+  // @@protoc_insertion_point(field_get:aafs.Stat.mtime)
   return _internal_mtime();
 }
-inline void Stat::_internal_set_mtime(uint64_t value) {
+inline void Stat::_internal_set_mtime(int64_t value) {
   
   mtime_ = value;
 }
-inline void Stat::set_mtime(uint64_t value) {
+inline void Stat::set_mtime(int64_t value) {
   _internal_set_mtime(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.mtime)
+  // @@protoc_insertion_point(field_set:aafs.Stat.mtime)
 }
 
-// uint64 ctime = 13;
+// int64 ctime = 11;
 inline void Stat::clear_ctime() {
-  ctime_ = uint64_t{0u};
+  ctime_ = int64_t{0};
 }
-inline uint64_t Stat::_internal_ctime() const {
+inline int64_t Stat::_internal_ctime() const {
   return ctime_;
 }
-inline uint64_t Stat::ctime() const {
-  // @@protoc_insertion_point(field_get:afs.Stat.ctime)
+inline int64_t Stat::ctime() const {
+  // @@protoc_insertion_point(field_get:aafs.Stat.ctime)
   return _internal_ctime();
 }
-inline void Stat::_internal_set_ctime(uint64_t value) {
+inline void Stat::_internal_set_ctime(int64_t value) {
   
   ctime_ = value;
 }
-inline void Stat::set_ctime(uint64_t value) {
+inline void Stat::set_ctime(int64_t value) {
   _internal_set_ctime(value);
-  // @@protoc_insertion_point(field_set:afs.Stat.ctime)
+  // @@protoc_insertion_point(field_set:aafs.Stat.ctime)
 }
 
 // -------------------------------------------------------------------
@@ -1122,7 +1215,7 @@ inline void PathRequest::clear_path() {
   path_.ClearToEmpty();
 }
 inline const std::string& PathRequest::path() const {
-  // @@protoc_insertion_point(field_get:afs.PathRequest.path)
+  // @@protoc_insertion_point(field_get:aafs.PathRequest.path)
   return _internal_path();
 }
 template <typename ArgT0, typename... ArgT>
@@ -1130,11 +1223,11 @@ inline PROTOBUF_ALWAYS_INLINE
 void PathRequest::set_path(ArgT0&& arg0, ArgT... args) {
  
  path_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:afs.PathRequest.path)
+  // @@protoc_insertion_point(field_set:aafs.PathRequest.path)
 }
 inline std::string* PathRequest::mutable_path() {
   std::string* _s = _internal_mutable_path();
-  // @@protoc_insertion_point(field_mutable:afs.PathRequest.path)
+  // @@protoc_insertion_point(field_mutable:aafs.PathRequest.path)
   return _s;
 }
 inline const std::string& PathRequest::_internal_path() const {
@@ -1149,7 +1242,7 @@ inline std::string* PathRequest::_internal_mutable_path() {
   return path_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* PathRequest::release_path() {
-  // @@protoc_insertion_point(field_release:afs.PathRequest.path)
+  // @@protoc_insertion_point(field_release:aafs.PathRequest.path)
   return path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
 inline void PathRequest::set_allocated_path(std::string* path) {
@@ -1165,7 +1258,7 @@ inline void PathRequest::set_allocated_path(std::string* path) {
     path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:afs.PathRequest.path)
+  // @@protoc_insertion_point(field_set_allocated:aafs.PathRequest.path)
 }
 
 // -------------------------------------------------------------------
@@ -1180,7 +1273,7 @@ inline int32_t GetAttrResponse::_internal_ret() const {
   return ret_;
 }
 inline int32_t GetAttrResponse::ret() const {
-  // @@protoc_insertion_point(field_get:afs.GetAttrResponse.ret)
+  // @@protoc_insertion_point(field_get:aafs.GetAttrResponse.ret)
   return _internal_ret();
 }
 inline void GetAttrResponse::_internal_set_ret(int32_t value) {
@@ -1189,10 +1282,10 @@ inline void GetAttrResponse::_internal_set_ret(int32_t value) {
 }
 inline void GetAttrResponse::set_ret(int32_t value) {
   _internal_set_ret(value);
-  // @@protoc_insertion_point(field_set:afs.GetAttrResponse.ret)
+  // @@protoc_insertion_point(field_set:aafs.GetAttrResponse.ret)
 }
 
-// .afs.Stat stat = 2;
+// .aafs.Stat stat = 2;
 inline bool GetAttrResponse::_internal_has_stat() const {
   return this != internal_default_instance() && stat_ != nullptr;
 }
@@ -1205,17 +1298,17 @@ inline void GetAttrResponse::clear_stat() {
   }
   stat_ = nullptr;
 }
-inline const ::afs::Stat& GetAttrResponse::_internal_stat() const {
-  const ::afs::Stat* p = stat_;
-  return p != nullptr ? *p : reinterpret_cast<const ::afs::Stat&>(
-      ::afs::_Stat_default_instance_);
+inline const ::aafs::Stat& GetAttrResponse::_internal_stat() const {
+  const ::aafs::Stat* p = stat_;
+  return p != nullptr ? *p : reinterpret_cast<const ::aafs::Stat&>(
+      ::aafs::_Stat_default_instance_);
 }
-inline const ::afs::Stat& GetAttrResponse::stat() const {
-  // @@protoc_insertion_point(field_get:afs.GetAttrResponse.stat)
+inline const ::aafs::Stat& GetAttrResponse::stat() const {
+  // @@protoc_insertion_point(field_get:aafs.GetAttrResponse.stat)
   return _internal_stat();
 }
 inline void GetAttrResponse::unsafe_arena_set_allocated_stat(
-    ::afs::Stat* stat) {
+    ::aafs::Stat* stat) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(stat_);
   }
@@ -1225,11 +1318,11 @@ inline void GetAttrResponse::unsafe_arena_set_allocated_stat(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:afs.GetAttrResponse.stat)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:aafs.GetAttrResponse.stat)
 }
-inline ::afs::Stat* GetAttrResponse::release_stat() {
+inline ::aafs::Stat* GetAttrResponse::release_stat() {
   
-  ::afs::Stat* temp = stat_;
+  ::aafs::Stat* temp = stat_;
   stat_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -1242,34 +1335,34 @@ inline ::afs::Stat* GetAttrResponse::release_stat() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::afs::Stat* GetAttrResponse::unsafe_arena_release_stat() {
-  // @@protoc_insertion_point(field_release:afs.GetAttrResponse.stat)
+inline ::aafs::Stat* GetAttrResponse::unsafe_arena_release_stat() {
+  // @@protoc_insertion_point(field_release:aafs.GetAttrResponse.stat)
   
-  ::afs::Stat* temp = stat_;
+  ::aafs::Stat* temp = stat_;
   stat_ = nullptr;
   return temp;
 }
-inline ::afs::Stat* GetAttrResponse::_internal_mutable_stat() {
+inline ::aafs::Stat* GetAttrResponse::_internal_mutable_stat() {
   
   if (stat_ == nullptr) {
-    auto* p = CreateMaybeMessage<::afs::Stat>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::aafs::Stat>(GetArenaForAllocation());
     stat_ = p;
   }
   return stat_;
 }
-inline ::afs::Stat* GetAttrResponse::mutable_stat() {
-  ::afs::Stat* _msg = _internal_mutable_stat();
-  // @@protoc_insertion_point(field_mutable:afs.GetAttrResponse.stat)
+inline ::aafs::Stat* GetAttrResponse::mutable_stat() {
+  ::aafs::Stat* _msg = _internal_mutable_stat();
+  // @@protoc_insertion_point(field_mutable:aafs.GetAttrResponse.stat)
   return _msg;
 }
-inline void GetAttrResponse::set_allocated_stat(::afs::Stat* stat) {
+inline void GetAttrResponse::set_allocated_stat(::aafs::Stat* stat) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete stat_;
   }
   if (stat) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::afs::Stat>::GetOwningArena(stat);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::aafs::Stat>::GetOwningArena(stat);
     if (message_arena != submessage_arena) {
       stat = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, stat, submessage_arena);
@@ -1279,7 +1372,7 @@ inline void GetAttrResponse::set_allocated_stat(::afs::Stat* stat) {
     
   }
   stat_ = stat;
-  // @@protoc_insertion_point(field_set_allocated:afs.GetAttrResponse.stat)
+  // @@protoc_insertion_point(field_set_allocated:aafs.GetAttrResponse.stat)
 }
 
 // -------------------------------------------------------------------
@@ -1294,7 +1387,7 @@ inline int32_t ReadDirResponse::_internal_ret() const {
   return ret_;
 }
 inline int32_t ReadDirResponse::ret() const {
-  // @@protoc_insertion_point(field_get:afs.ReadDirResponse.ret)
+  // @@protoc_insertion_point(field_get:aafs.ReadDirResponse.ret)
   return _internal_ret();
 }
 inline void ReadDirResponse::_internal_set_ret(int32_t value) {
@@ -1303,7 +1396,7 @@ inline void ReadDirResponse::_internal_set_ret(int32_t value) {
 }
 inline void ReadDirResponse::set_ret(int32_t value) {
   _internal_set_ret(value);
-  // @@protoc_insertion_point(field_set:afs.ReadDirResponse.ret)
+  // @@protoc_insertion_point(field_set:aafs.ReadDirResponse.ret)
 }
 
 // repeated string entries = 2;
@@ -1318,67 +1411,122 @@ inline void ReadDirResponse::clear_entries() {
 }
 inline std::string* ReadDirResponse::add_entries() {
   std::string* _s = _internal_add_entries();
-  // @@protoc_insertion_point(field_add_mutable:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_add_mutable:aafs.ReadDirResponse.entries)
   return _s;
 }
 inline const std::string& ReadDirResponse::_internal_entries(int index) const {
   return entries_.Get(index);
 }
 inline const std::string& ReadDirResponse::entries(int index) const {
-  // @@protoc_insertion_point(field_get:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_get:aafs.ReadDirResponse.entries)
   return _internal_entries(index);
 }
 inline std::string* ReadDirResponse::mutable_entries(int index) {
-  // @@protoc_insertion_point(field_mutable:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_mutable:aafs.ReadDirResponse.entries)
   return entries_.Mutable(index);
 }
 inline void ReadDirResponse::set_entries(int index, const std::string& value) {
   entries_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_set:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::set_entries(int index, std::string&& value) {
   entries_.Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_set:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::set_entries(int index, const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   entries_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_set_char:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::set_entries(int index, const char* value, size_t size) {
   entries_.Mutable(index)->assign(
     reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_set_pointer:aafs.ReadDirResponse.entries)
 }
 inline std::string* ReadDirResponse::_internal_add_entries() {
   return entries_.Add();
 }
 inline void ReadDirResponse::add_entries(const std::string& value) {
   entries_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_add:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::add_entries(std::string&& value) {
   entries_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_add:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::add_entries(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   entries_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_add_char:aafs.ReadDirResponse.entries)
 }
 inline void ReadDirResponse::add_entries(const char* value, size_t size) {
   entries_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_add_pointer:aafs.ReadDirResponse.entries)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
 ReadDirResponse::entries() const {
-  // @@protoc_insertion_point(field_list:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_list:aafs.ReadDirResponse.entries)
   return entries_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 ReadDirResponse::mutable_entries() {
-  // @@protoc_insertion_point(field_mutable_list:afs.ReadDirResponse.entries)
+  // @@protoc_insertion_point(field_mutable_list:aafs.ReadDirResponse.entries)
   return &entries_;
+}
+
+// -------------------------------------------------------------------
+
+// FileContent
+
+// bytes data = 1;
+inline void FileContent::clear_data() {
+  data_.ClearToEmpty();
+}
+inline const std::string& FileContent::data() const {
+  // @@protoc_insertion_point(field_get:aafs.FileContent.data)
+  return _internal_data();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FileContent::set_data(ArgT0&& arg0, ArgT... args) {
+ 
+ data_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:aafs.FileContent.data)
+}
+inline std::string* FileContent::mutable_data() {
+  std::string* _s = _internal_mutable_data();
+  // @@protoc_insertion_point(field_mutable:aafs.FileContent.data)
+  return _s;
+}
+inline const std::string& FileContent::_internal_data() const {
+  return data_.Get();
+}
+inline void FileContent::_internal_set_data(const std::string& value) {
+  
+  data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* FileContent::_internal_mutable_data() {
+  
+  return data_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* FileContent::release_data() {
+  // @@protoc_insertion_point(field_release:aafs.FileContent.data)
+  return data_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void FileContent::set_allocated_data(std::string* data) {
+  if (data != nullptr) {
+    
+  } else {
+    
+  }
+  data_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), data,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (data_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:aafs.FileContent.data)
 }
 
 #ifdef __GNUC__
@@ -1390,10 +1538,12 @@ ReadDirResponse::mutable_entries() {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace afs
+}  // namespace aafs
 
 // @@protoc_insertion_point(global_scope)
 

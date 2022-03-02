@@ -2,13 +2,11 @@
 #include <fcntl.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
-#include <signal.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include "includes/hello.grpc.pb.h"
 
-using afs::gRPCService;
+using aafs::gRPCService;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -17,7 +15,7 @@ using grpc::ServerReaderWriter;
 using grpc::ServerWriter;
 using grpc::Status;
 
-static const std::string SERVER_FOLDER = "./server_folder/";
+#define SERVER_FOLDER "./server_folder/"
 
 class gRPCServiceImpl final : public gRPCService::Service {
    private:
@@ -25,9 +23,9 @@ class gRPCServiceImpl final : public gRPCService::Service {
         return (SERVER_FOLDER + path);
     }
 
-    Status s_getattr(ServerContext *context, const afs::PathRequest *req,
-                     afs::GetAttrResponse *reply) override {
-        struct stat st;
+    Status s_getattr(ServerContext *context, const aafs::PathRequest *req,
+                     aafs::GetAttrResponse *reply) override {
+        struct stat st {};
         int ret = lstat(to_server_path(req->path()).c_str(), &st);
         if (ret == -1) {
             reply->set_ret(-errno);
@@ -35,8 +33,7 @@ class gRPCServiceImpl final : public gRPCService::Service {
         }
         reply->set_ret(ret);
 
-        auto stat = std::make_unique<afs::Stat>();
-        stat->set_dev(st.st_dev);
+        auto stat = std::make_unique<aafs::Stat>();
         stat->set_ino(st.st_ino);
         stat->set_mode(st.st_mode);
         stat->set_nlink(st.st_nlink);
@@ -44,29 +41,43 @@ class gRPCServiceImpl final : public gRPCService::Service {
         stat->set_gid(st.st_gid);
         stat->set_rdev(st.st_rdev);
         stat->set_size(st.st_size);
-        stat->set_blksize(st.st_blksize);
         stat->set_blocks(st.st_blocks);
         stat->set_atime(st.st_atime);
         stat->set_mtime(st.st_mtime);
-        stat->set_ctime(st.st_ctime);
 
         reply->set_allocated_stat(stat.release());
         return Status::OK;
     }
 
-    Status s_readdir(ServerContext *context, const afs::PathRequest *req,
-                     afs::ReadDirResponse *reply) override {
+    Status s_readdir(ServerContext *context, const aafs::PathRequest *req,
+                     aafs::ReadDirResponse *reply) override {
         DIR *dp;
         struct dirent *de;
         dp = opendir(to_server_path(req->path()).c_str());
-        if (dp == NULL) {
+        if (dp == nullptr) {
             reply->set_ret(-errno);
             return Status::OK;
         }
-        while ((de = readdir(dp)) != NULL) {
+        while ((de = readdir(dp)) != nullptr) {
             reply->add_entries(de->d_name);
         }
         closedir(dp);
+        return Status::OK;
+    }
+
+    Status s_download(ServerContext *context, const aafs::PathRequest *req,
+                      ServerWriter<aafs::FileContent> *writer) override {
+        int fd = open(to_server_path(req->path()).c_str(), O_RDONLY);
+        if (fd == -1) {
+            return Status::CANCELLED;
+        }
+        aafs::FileContent dl;
+        ssize_t n;
+        char buf[4096];
+        while ((n = read(fd, buf, sizeof(buf))) > 0) {
+            dl.set_data(buf, n);
+            writer->Write(dl);
+        }
         return Status::OK;
     }
 };

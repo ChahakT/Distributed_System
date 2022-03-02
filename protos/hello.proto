@@ -1,21 +1,19 @@
 syntax = "proto3";
 
-package afs;
+package aafs;
 
 message Stat {
-  uint64 dev = 1;     /* ID of device containing file */
-  uint64 ino = 2;     /* Inode number */
-  uint64 mode = 3;    /* File type and mode */
-  uint64 nlink = 4;   /* Number of hard links */
-  uint64 uid = 5;     /* User ID of owner */
-  uint64 gid = 6;     /* Group ID of owner */
-  uint64 rdev = 7;    /* Device ID (if special file) */
-  uint64 size = 8;    /* Total size, in bytes */
-  uint64 blksize = 9; /* Block size for filesystem I/O */
-  uint64 blocks = 10; /* Number of 512B blocks allocated */
-  uint64 atime = 11;
-  uint64 mtime = 12;
-  uint64 ctime = 13;
+  uint64 ino = 1;   /* Inode number */
+  uint64 mode = 2;  /* File type and mode */
+  uint64 nlink = 3; /* Number of hard links */
+  uint64 uid = 4;   /* User ID of owner */
+  uint64 gid = 5;   /* Group ID of owner */
+  uint64 rdev = 6;  /* Device ID (if special file) */
+  int64 size = 7;   /* Total size, in bytes */
+  int64 blocks = 8; /* Number of 512B blocks allocated */
+  int64 atime = 9;
+  int64 mtime = 10;
+  int64 ctime = 11;
 }
 
 message PathRequest { string path = 1; }
@@ -30,7 +28,10 @@ message ReadDirResponse {
   repeated string entries = 2;
 }
 
+message FileContent { bytes data = 1; }
+
 service gRPCService {
   rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
   rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
+  rpc s_download(PathRequest) returns (stream FileContent) {}
 }

@@ -1,28 +1,18 @@
 #define FUSE_USE_VERSION 35
 
 #include <fuse.h>
-#include <openssl/sha.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
-#include <utime.h>
 
-#include <cassert>
-#include <iomanip>
 #include <iostream>
 #include <memory>
 
 #include "client_grpc.cpp"
 
-#define GET_PDATA static_cast<PrivateData*>(fuse_get_context()->private_data)
-
 class PrivateData {
    public:
     GRPCClient client;
-    PrivateData(std::shared_ptr<Channel> channel) : client(channel) {}
+    explicit PrivateData(const std::shared_ptr<Channel>& channel)
+        : client(channel) {}
 };
 
 static int do_getattr(const char* path, struct stat* st) {
@@ -32,6 +22,18 @@ static int do_getattr(const char* path, struct stat* st) {
 static int do_readdir(const char* path, void* buffer, fuse_fill_dir_t filler,
                       off_t offset, struct fuse_file_info* fi) {
     return GET_PDATA->client.c_readdir(path, buffer, filler, offset, fi);
+}
+
+static int do_open(const char* path, struct fuse_file_info* fi) {
+    return GET_PDATA->client.c_open(path, fi);
+}
+
+static int do_read(const char* path, char* buffer, size_t size, off_t offset,
+                   struct fuse_file_info* fi) {
+    printf("[read] %s\n", path);
+    ssize_t ret;
+    RET_ERR(ret = pread(fi->fh, buffer, size, offset));
+    return ret;
 }
 
 static struct fuse_operations operations;
@@ -48,6 +50,8 @@ int main(int argc, char* argv[]) {
 
     operations.getattr = do_getattr;
     operations.readdir = do_readdir;
+    operations.open = do_open;
+    operations.read = do_read;
 
     return fuse_main(argc, argv, &operations, &private_data);
 }
