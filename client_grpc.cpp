@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <fuse.h>
 #include <grpcpp/grpcpp.h>
+#include <openssl/sha.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utime.h>
@@ -9,6 +10,7 @@
 #include <cstring>
 #include <memory>
 #include <string>
+#include <iomanip>
 
 #include "includes/hello.grpc.pb.h"
 #include "includes/hello.pb.h"
@@ -30,8 +32,20 @@ using grpc::Status;
 
 class GRPCClient {
    private:
+    static std::string hash_str(const char *src) {
+        auto digest = std::make_unique<unsigned char[]>(SHA256_DIGEST_LENGTH);
+        SHA256(reinterpret_cast<const unsigned char *>(src), strlen(src),
+               digest.get());
+        std::stringstream ss;
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+            ss << std::hex << std::setw(2) << std::setfill('0')
+               << static_cast<int>(digest[i]);
+        }
+        return ss.str();
+    }
+
     static std::string to_cache_path(const std::string &path) {
-        return (CLIENT_CACHE_FOLDER + path);
+        return (CLIENT_CACHE_FOLDER + hash_str(path.c_str()));
     }
 
     static std::pair<int, std::string> get_tmp_file() {
