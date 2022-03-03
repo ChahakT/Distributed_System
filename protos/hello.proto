@@ -41,6 +41,11 @@ message OpenResponse {
 }
 message StatusResponse { int32 ret = 1; }
 
+message RenameRequest {
+  string oldpath = 1;
+  string newpath = 2;
+}
+
 service gRPCService {
   rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
   rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
@@ -49,4 +54,5 @@ service gRPCService {
   rpc s_mkdir(PathRequest) returns (StatusResponse) {}
   rpc s_rmdir(PathRequest) returns (StatusResponse) {}
   rpc s_creat(PathRequest) returns (StatusResponse) {}
+  rpc s_rename(RenameRequest) returns (StatusResponse) {}
 }

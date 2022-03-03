@@ -29,6 +29,7 @@ static const char* gRPCService_method_names[] = {
   "/aafs.gRPCService/s_mkdir",
   "/aafs.gRPCService/s_rmdir",
   "/aafs.gRPCService/s_creat",
+  "/aafs.gRPCService/s_rename",
 };
 
 std::unique_ptr< gRPCService::Stub> gRPCService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -45,6 +46,7 @@ gRPCService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channe
   , rpcmethod_s_mkdir_(gRPCService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_s_rmdir_(gRPCService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_s_creat_(gRPCService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_rename_(gRPCService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status gRPCService::Stub::s_getattr(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::GetAttrResponse* response) {
@@ -201,6 +203,29 @@ void gRPCService::Stub::async::s_creat(::grpc::ClientContext* context, const ::a
   return result;
 }
 
+::grpc::Status gRPCService::Stub::s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::aafs::StatusResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::aafs::RenameRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_s_rename_, context, request, response);
+}
+
+void gRPCService::Stub::async::s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::aafs::RenameRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_rename_, context, request, response, std::move(f));
+}
+
+void gRPCService::Stub::async::s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_rename_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* gRPCService::Stub::PrepareAsyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::aafs::StatusResponse, ::aafs::RenameRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_s_rename_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* gRPCService::Stub::Asyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncs_renameRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 gRPCService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[0],
@@ -272,6 +297,16 @@ gRPCService::Service::Service() {
              ::aafs::StatusResponse* resp) {
                return service->s_creat(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      gRPCService_method_names[7],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::aafs::RenameRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](gRPCService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::aafs::RenameRequest* req,
+             ::aafs::StatusResponse* resp) {
+               return service->s_rename(ctx, req, resp);
+             }, this)));
 }
 
 gRPCService::Service::~Service() {
@@ -320,6 +355,13 @@ gRPCService::Service::~Service() {
 }
 
 ::grpc::Status gRPCService::Service::s_creat(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status gRPCService::Service::s_rename(::grpc::ServerContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -86,6 +86,13 @@ class gRPCService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> PrepareAsyncs_creat(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>>(PrepareAsyncs_creatRaw(context, request, cq));
     }
+    virtual ::grpc::Status s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::aafs::StatusResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> Asyncs_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>>(Asyncs_renameRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> PrepareAsyncs_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>>(PrepareAsyncs_renameRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -102,6 +109,8 @@ class gRPCService final {
       virtual void s_rmdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void s_creat(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void s_creat(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -122,6 +131,8 @@ class gRPCService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* PrepareAsyncs_rmdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* Asyncs_creatRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* PrepareAsyncs_creatRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* Asyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* PrepareAsyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -177,6 +188,13 @@ class gRPCService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> PrepareAsyncs_creat(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>>(PrepareAsyncs_creatRaw(context, request, cq));
     }
+    ::grpc::Status s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::aafs::StatusResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> Asyncs_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>>(Asyncs_renameRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> PrepareAsyncs_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>>(PrepareAsyncs_renameRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -193,6 +211,8 @@ class gRPCService final {
       void s_rmdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void s_creat(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) override;
       void s_creat(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) override;
+      void s_rename(::grpc::ClientContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -219,6 +239,8 @@ class gRPCService final {
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* PrepareAsyncs_rmdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* Asyncs_creatRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* PrepareAsyncs_creatRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* Asyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* PrepareAsyncs_renameRaw(::grpc::ClientContext* context, const ::aafs::RenameRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_s_getattr_;
     const ::grpc::internal::RpcMethod rpcmethod_s_readdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_download_;
@@ -226,6 +248,7 @@ class gRPCService final {
     const ::grpc::internal::RpcMethod rpcmethod_s_mkdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_rmdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_creat_;
+    const ::grpc::internal::RpcMethod rpcmethod_s_rename_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -240,6 +263,7 @@ class gRPCService final {
     virtual ::grpc::Status s_mkdir(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
     virtual ::grpc::Status s_rmdir(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
     virtual ::grpc::Status s_creat(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
+    virtual ::grpc::Status s_rename(::grpc::ServerContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_s_getattr : public BaseClass {
@@ -381,7 +405,27 @@ class gRPCService final {
       ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_s_getattr<WithAsyncMethod_s_readdir<WithAsyncMethod_s_download<WithAsyncMethod_s_unlink<WithAsyncMethod_s_mkdir<WithAsyncMethod_s_rmdir<WithAsyncMethod_s_creat<Service > > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_s_rename() {
+      ::grpc::Service::MarkMethodAsync(7);
+    }
+    ~WithAsyncMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_rename(::grpc::ServerContext* context, ::aafs::RenameRequest* request, ::grpc::ServerAsyncResponseWriter< ::aafs::StatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_s_getattr<WithAsyncMethod_s_readdir<WithAsyncMethod_s_download<WithAsyncMethod_s_unlink<WithAsyncMethod_s_mkdir<WithAsyncMethod_s_rmdir<WithAsyncMethod_s_creat<WithAsyncMethod_s_rename<Service > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_s_getattr : public BaseClass {
    private:
@@ -566,7 +610,34 @@ class gRPCService final {
     virtual ::grpc::ServerUnaryReactor* s_creat(
       ::grpc::CallbackServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_s_getattr<WithCallbackMethod_s_readdir<WithCallbackMethod_s_download<WithCallbackMethod_s_unlink<WithCallbackMethod_s_mkdir<WithCallbackMethod_s_rmdir<WithCallbackMethod_s_creat<Service > > > > > > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_s_rename() {
+      ::grpc::Service::MarkMethodCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::aafs::RenameRequest, ::aafs::StatusResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::aafs::RenameRequest* request, ::aafs::StatusResponse* response) { return this->s_rename(context, request, response); }));}
+    void SetMessageAllocatorFor_s_rename(
+        ::grpc::MessageAllocator< ::aafs::RenameRequest, ::aafs::StatusResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::aafs::RenameRequest, ::aafs::StatusResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* s_rename(
+      ::grpc::CallbackServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_s_getattr<WithCallbackMethod_s_readdir<WithCallbackMethod_s_download<WithCallbackMethod_s_unlink<WithCallbackMethod_s_mkdir<WithCallbackMethod_s_rmdir<WithCallbackMethod_s_creat<WithCallbackMethod_s_rename<Service > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_s_getattr : public BaseClass {
@@ -683,6 +754,23 @@ class gRPCService final {
     }
     // disable synchronous version of this method
     ::grpc::Status s_creat(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_s_rename() {
+      ::grpc::Service::MarkMethodGeneric(7);
+    }
+    ~WithGenericMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -825,6 +913,26 @@ class gRPCService final {
     }
     void Requests_creat(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_s_rename() {
+      ::grpc::Service::MarkMethodRaw(7);
+    }
+    ~WithRawMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_rename(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -979,6 +1087,28 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* s_creat(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_s_rename() {
+      ::grpc::Service::MarkMethodRawCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_rename(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* s_rename(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -1143,7 +1273,34 @@ class gRPCService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status Streameds_creat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::aafs::PathRequest,::aafs::StatusResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_s_rename : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_s_rename() {
+      ::grpc::Service::MarkMethodStreamed(7,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::aafs::RenameRequest, ::aafs::StatusResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::aafs::RenameRequest, ::aafs::StatusResponse>* streamer) {
+                       return this->Streameds_rename(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_s_rename() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status s_rename(::grpc::ServerContext* /*context*/, const ::aafs::RenameRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streameds_rename(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::aafs::RenameRequest,::aafs::StatusResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<WithStreamedUnaryMethod_s_rename<Service > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_s_download : public BaseClass {
    private:
@@ -1172,7 +1329,7 @@ class gRPCService final {
     virtual ::grpc::Status Streameds_download(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::aafs::PathRequest,::aafs::OpenResponse>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_s_download<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithSplitStreamingMethod_s_download<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithSplitStreamingMethod_s_download<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<WithStreamedUnaryMethod_s_rename<Service > > > > > > > > StreamedService;
 };
 
 }  // namespace aafs

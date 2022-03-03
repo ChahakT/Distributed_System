@@ -131,6 +131,14 @@ class gRPCServiceImpl final : public gRPCService::Service {
         reply->set_ret(ret);
         return Status::OK;
     }
+
+    Status s_rename(ServerContext *context, const aafs::RenameRequest *req,
+                     aafs::StatusResponse *reply) override {
+        int ret = rename(to_server_path(req->oldpath()).c_str(),
+                         to_server_path(req->newpath()).c_str());
+        reply->set_ret(ret);
+        return Status::OK;
+    }
 };
 
 int main() {

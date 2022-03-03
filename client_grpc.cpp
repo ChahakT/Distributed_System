@@ -273,6 +273,20 @@ class GRPCClient {
         return reply.ret();
     }
 
+    int c_rename(const char* oldpath, const char* newpath) {
+        printf("[rename] %s %s\n", oldpath, newpath);
+        aafs::RenameRequest request;
+        request.set_oldpath(oldpath);
+        request.set_newpath(newpath);
+        aafs::StatusResponse reply;
+        ClientContext context;
+        Status status = stub_->s_rename(&context, request, &reply);
+        if (!status.ok()) {
+            return -ENONET;
+        }
+        return reply.ret();
+    }
+
    private:
     std::unique_ptr<gRPCService::Stub> stub_;
 };

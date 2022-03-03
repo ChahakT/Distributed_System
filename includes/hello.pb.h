@@ -46,7 +46,7 @@ struct TableStruct_hello_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -69,6 +69,9 @@ extern PathRequestDefaultTypeInternal _PathRequest_default_instance_;
 class ReadDirResponse;
 struct ReadDirResponseDefaultTypeInternal;
 extern ReadDirResponseDefaultTypeInternal _ReadDirResponse_default_instance_;
+class RenameRequest;
+struct RenameRequestDefaultTypeInternal;
+extern RenameRequestDefaultTypeInternal _RenameRequest_default_instance_;
 class Stat;
 struct StatDefaultTypeInternal;
 extern StatDefaultTypeInternal _Stat_default_instance_;
@@ -82,6 +85,7 @@ template<> ::aafs::MATime* Arena::CreateMaybeMessage<::aafs::MATime>(Arena*);
 template<> ::aafs::OpenResponse* Arena::CreateMaybeMessage<::aafs::OpenResponse>(Arena*);
 template<> ::aafs::PathRequest* Arena::CreateMaybeMessage<::aafs::PathRequest>(Arena*);
 template<> ::aafs::ReadDirResponse* Arena::CreateMaybeMessage<::aafs::ReadDirResponse>(Arena*);
+template<> ::aafs::RenameRequest* Arena::CreateMaybeMessage<::aafs::RenameRequest>(Arena*);
 template<> ::aafs::Stat* Arena::CreateMaybeMessage<::aafs::Stat>(Arena*);
 template<> ::aafs::StatusResponse* Arena::CreateMaybeMessage<::aafs::StatusResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -1329,6 +1333,173 @@ class StatusResponse final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_hello_2eproto;
 };
+// -------------------------------------------------------------------
+
+class RenameRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.RenameRequest) */ {
+ public:
+  inline RenameRequest() : RenameRequest(nullptr) {}
+  ~RenameRequest() override;
+  explicit constexpr RenameRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RenameRequest(const RenameRequest& from);
+  RenameRequest(RenameRequest&& from) noexcept
+    : RenameRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline RenameRequest& operator=(const RenameRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RenameRequest& operator=(RenameRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RenameRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RenameRequest* internal_default_instance() {
+    return reinterpret_cast<const RenameRequest*>(
+               &_RenameRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(RenameRequest& a, RenameRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RenameRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RenameRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RenameRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RenameRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RenameRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const RenameRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RenameRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "aafs.RenameRequest";
+  }
+  protected:
+  explicit RenameRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOldpathFieldNumber = 1,
+    kNewpathFieldNumber = 2,
+  };
+  // string oldpath = 1;
+  void clear_oldpath();
+  const std::string& oldpath() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_oldpath(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_oldpath();
+  PROTOBUF_NODISCARD std::string* release_oldpath();
+  void set_allocated_oldpath(std::string* oldpath);
+  private:
+  const std::string& _internal_oldpath() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_oldpath(const std::string& value);
+  std::string* _internal_mutable_oldpath();
+  public:
+
+  // string newpath = 2;
+  void clear_newpath();
+  const std::string& newpath() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_newpath(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_newpath();
+  PROTOBUF_NODISCARD std::string* release_newpath();
+  void set_allocated_newpath(std::string* newpath);
+  private:
+  const std::string& _internal_newpath() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_newpath(const std::string& value);
+  std::string* _internal_mutable_newpath();
+  public:
+
+  // @@protoc_insertion_point(class_scope:aafs.RenameRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr oldpath_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr newpath_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_hello_2eproto;
+};
 // ===================================================================
 
 
@@ -2065,9 +2236,117 @@ inline void StatusResponse::set_ret(int32_t value) {
   // @@protoc_insertion_point(field_set:aafs.StatusResponse.ret)
 }
 
+// -------------------------------------------------------------------
+
+// RenameRequest
+
+// string oldpath = 1;
+inline void RenameRequest::clear_oldpath() {
+  oldpath_.ClearToEmpty();
+}
+inline const std::string& RenameRequest::oldpath() const {
+  // @@protoc_insertion_point(field_get:aafs.RenameRequest.oldpath)
+  return _internal_oldpath();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenameRequest::set_oldpath(ArgT0&& arg0, ArgT... args) {
+ 
+ oldpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:aafs.RenameRequest.oldpath)
+}
+inline std::string* RenameRequest::mutable_oldpath() {
+  std::string* _s = _internal_mutable_oldpath();
+  // @@protoc_insertion_point(field_mutable:aafs.RenameRequest.oldpath)
+  return _s;
+}
+inline const std::string& RenameRequest::_internal_oldpath() const {
+  return oldpath_.Get();
+}
+inline void RenameRequest::_internal_set_oldpath(const std::string& value) {
+  
+  oldpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenameRequest::_internal_mutable_oldpath() {
+  
+  return oldpath_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenameRequest::release_oldpath() {
+  // @@protoc_insertion_point(field_release:aafs.RenameRequest.oldpath)
+  return oldpath_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenameRequest::set_allocated_oldpath(std::string* oldpath) {
+  if (oldpath != nullptr) {
+    
+  } else {
+    
+  }
+  oldpath_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), oldpath,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (oldpath_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    oldpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:aafs.RenameRequest.oldpath)
+}
+
+// string newpath = 2;
+inline void RenameRequest::clear_newpath() {
+  newpath_.ClearToEmpty();
+}
+inline const std::string& RenameRequest::newpath() const {
+  // @@protoc_insertion_point(field_get:aafs.RenameRequest.newpath)
+  return _internal_newpath();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenameRequest::set_newpath(ArgT0&& arg0, ArgT... args) {
+ 
+ newpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:aafs.RenameRequest.newpath)
+}
+inline std::string* RenameRequest::mutable_newpath() {
+  std::string* _s = _internal_mutable_newpath();
+  // @@protoc_insertion_point(field_mutable:aafs.RenameRequest.newpath)
+  return _s;
+}
+inline const std::string& RenameRequest::_internal_newpath() const {
+  return newpath_.Get();
+}
+inline void RenameRequest::_internal_set_newpath(const std::string& value) {
+  
+  newpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenameRequest::_internal_mutable_newpath() {
+  
+  return newpath_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenameRequest::release_newpath() {
+  // @@protoc_insertion_point(field_release:aafs.RenameRequest.newpath)
+  return newpath_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenameRequest::set_allocated_newpath(std::string* newpath) {
+  if (newpath != nullptr) {
+    
+  } else {
+    
+  }
+  newpath_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), newpath,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (newpath_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    newpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:aafs.RenameRequest.newpath)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

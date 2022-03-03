@@ -114,8 +114,21 @@ struct StatusResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT StatusResponseDefaultTypeInternal _StatusResponse_default_instance_;
+constexpr RenameRequest::RenameRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : oldpath_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , newpath_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct RenameRequestDefaultTypeInternal {
+  constexpr RenameRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~RenameRequestDefaultTypeInternal() {}
+  union {
+    RenameRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT RenameRequestDefaultTypeInternal _RenameRequest_default_instance_;
 }  // namespace aafs
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_hello_2eproto[7];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_hello_2eproto[8];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_hello_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_hello_2eproto = nullptr;
 
@@ -184,6 +197,14 @@ const uint32_t TableStruct_hello_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::aafs::StatusResponse, ret_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::aafs::RenameRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::aafs::RenameRequest, oldpath_),
+  PROTOBUF_FIELD_OFFSET(::aafs::RenameRequest, newpath_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::aafs::Stat)},
@@ -193,6 +214,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 40, -1, -1, sizeof(::aafs::MATime)},
   { 48, -1, -1, sizeof(::aafs::OpenResponse)},
   { 57, -1, -1, sizeof(::aafs::StatusResponse)},
+  { 64, -1, -1, sizeof(::aafs::RenameRequest)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -203,6 +225,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::aafs::_MATime_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::aafs::_OpenResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::aafs::_StatusResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::aafs::_RenameRequest_default_instance_),
 };
 
 const char descriptor_table_protodef_hello_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -217,22 +240,25 @@ const char descriptor_table_protodef_hello_2eproto[] PROTOBUF_SECTION_VARIABLE(p
   "\t\"&\n\006MATime\022\r\n\005atime\030\001 \001(\003\022\r\n\005mtime\030\002 \001("
   "\003\"J\n\014OpenResponse\022\034\n\004time\030\001 \001(\0132\014.aafs.M"
   "ATimeH\000\022\016\n\004data\030\002 \001(\014H\000B\014\n\ntest_oneof\"\035\n"
-  "\016StatusResponse\022\013\n\003ret\030\001 \001(\0052\221\003\n\013gRPCSer"
-  "vice\0227\n\ts_getattr\022\021.aafs.PathRequest\032\025.a"
-  "afs.GetAttrResponse\"\000\0227\n\ts_readdir\022\021.aaf"
-  "s.PathRequest\032\025.aafs.ReadDirResponse\"\000\0227"
-  "\n\ns_download\022\021.aafs.PathRequest\032\022.aafs.O"
-  "penResponse\"\0000\001\0225\n\010s_unlink\022\021.aafs.PathR"
-  "equest\032\024.aafs.StatusResponse\"\000\0224\n\007s_mkdi"
-  "r\022\021.aafs.PathRequest\032\024.aafs.StatusRespon"
-  "se\"\000\0224\n\007s_rmdir\022\021.aafs.PathRequest\032\024.aaf"
-  "s.StatusResponse\"\000\0224\n\007s_creat\022\021.aafs.Pat"
-  "hRequest\032\024.aafs.StatusResponse\"\000b\006proto3"
+  "\016StatusResponse\022\013\n\003ret\030\001 \001(\005\"1\n\rRenameRe"
+  "quest\022\017\n\007oldpath\030\001 \001(\t\022\017\n\007newpath\030\002 \001(\t2"
+  "\312\003\n\013gRPCService\0227\n\ts_getattr\022\021.aafs.Path"
+  "Request\032\025.aafs.GetAttrResponse\"\000\0227\n\ts_re"
+  "addir\022\021.aafs.PathRequest\032\025.aafs.ReadDirR"
+  "esponse\"\000\0227\n\ns_download\022\021.aafs.PathReque"
+  "st\032\022.aafs.OpenResponse\"\0000\001\0225\n\010s_unlink\022\021"
+  ".aafs.PathRequest\032\024.aafs.StatusResponse\""
+  "\000\0224\n\007s_mkdir\022\021.aafs.PathRequest\032\024.aafs.S"
+  "tatusResponse\"\000\0224\n\007s_rmdir\022\021.aafs.PathRe"
+  "quest\032\024.aafs.StatusResponse\"\000\0224\n\007s_creat"
+  "\022\021.aafs.PathRequest\032\024.aafs.StatusRespons"
+  "e\"\000\0227\n\010s_rename\022\023.aafs.RenameRequest\032\024.a"
+  "afs.StatusResponse\"\000b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_hello_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_hello_2eproto = {
-  false, false, 880, descriptor_table_protodef_hello_2eproto, "hello.proto", 
-  &descriptor_table_hello_2eproto_once, nullptr, 0, 7,
+  false, false, 988, descriptor_table_protodef_hello_2eproto, "hello.proto", 
+  &descriptor_table_hello_2eproto_once, nullptr, 0, 8,
   schemas, file_default_instances, TableStruct_hello_2eproto::offsets,
   file_level_metadata_hello_2eproto, file_level_enum_descriptors_hello_2eproto, file_level_service_descriptors_hello_2eproto,
 };
@@ -1967,6 +1993,258 @@ void StatusResponse::InternalSwap(StatusResponse* other) {
       file_level_metadata_hello_2eproto[6]);
 }
 
+// ===================================================================
+
+class RenameRequest::_Internal {
+ public:
+};
+
+RenameRequest::RenameRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:aafs.RenameRequest)
+}
+RenameRequest::RenameRequest(const RenameRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  oldpath_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    oldpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_oldpath().empty()) {
+    oldpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_oldpath(), 
+      GetArenaForAllocation());
+  }
+  newpath_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    newpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_newpath().empty()) {
+    newpath_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_newpath(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:aafs.RenameRequest)
+}
+
+inline void RenameRequest::SharedCtor() {
+oldpath_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  oldpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+newpath_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  newpath_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+RenameRequest::~RenameRequest() {
+  // @@protoc_insertion_point(destructor:aafs.RenameRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void RenameRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  oldpath_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  newpath_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void RenameRequest::ArenaDtor(void* object) {
+  RenameRequest* _this = reinterpret_cast< RenameRequest* >(object);
+  (void)_this;
+}
+void RenameRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void RenameRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void RenameRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:aafs.RenameRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  oldpath_.ClearToEmpty();
+  newpath_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* RenameRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string oldpath = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_oldpath();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "aafs.RenameRequest.oldpath"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string newpath = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_newpath();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "aafs.RenameRequest.newpath"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* RenameRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:aafs.RenameRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string oldpath = 1;
+  if (!this->_internal_oldpath().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_oldpath().data(), static_cast<int>(this->_internal_oldpath().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "aafs.RenameRequest.oldpath");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_oldpath(), target);
+  }
+
+  // string newpath = 2;
+  if (!this->_internal_newpath().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_newpath().data(), static_cast<int>(this->_internal_newpath().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "aafs.RenameRequest.newpath");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_newpath(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:aafs.RenameRequest)
+  return target;
+}
+
+size_t RenameRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:aafs.RenameRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string oldpath = 1;
+  if (!this->_internal_oldpath().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_oldpath());
+  }
+
+  // string newpath = 2;
+  if (!this->_internal_newpath().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_newpath());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RenameRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    RenameRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RenameRequest::GetClassData() const { return &_class_data_; }
+
+void RenameRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<RenameRequest *>(to)->MergeFrom(
+      static_cast<const RenameRequest &>(from));
+}
+
+
+void RenameRequest::MergeFrom(const RenameRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:aafs.RenameRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_oldpath().empty()) {
+    _internal_set_oldpath(from._internal_oldpath());
+  }
+  if (!from._internal_newpath().empty()) {
+    _internal_set_newpath(from._internal_newpath());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void RenameRequest::CopyFrom(const RenameRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:aafs.RenameRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RenameRequest::IsInitialized() const {
+  return true;
+}
+
+void RenameRequest::InternalSwap(RenameRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &oldpath_, lhs_arena,
+      &other->oldpath_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &newpath_, lhs_arena,
+      &other->newpath_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RenameRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_hello_2eproto_getter, &descriptor_table_hello_2eproto_once,
+      file_level_metadata_hello_2eproto[7]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace aafs
 PROTOBUF_NAMESPACE_OPEN
@@ -1990,6 +2268,9 @@ template<> PROTOBUF_NOINLINE ::aafs::OpenResponse* Arena::CreateMaybeMessage< ::
 }
 template<> PROTOBUF_NOINLINE ::aafs::StatusResponse* Arena::CreateMaybeMessage< ::aafs::StatusResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::aafs::StatusResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::aafs::RenameRequest* Arena::CreateMaybeMessage< ::aafs::RenameRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::aafs::RenameRequest >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

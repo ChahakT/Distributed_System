@@ -62,6 +62,11 @@ static int do_unlink(const char* path) {
     return GET_PDATA->client.c_unlink(path);
 }
 
+static int do_rename(
+    const char* oldpath, const char* newpath) {
+    return GET_PDATA->client.c_rename(oldpath, newpath);
+}
+
 static struct fuse_operations operations;
 
 int main(int argc, char* argv[]) {
@@ -84,6 +89,7 @@ int main(int argc, char* argv[]) {
     operations.create = do_creat;
     //    operations.flush = do_flush;
     operations.unlink = do_unlink;
+    operations.rename = do_rename;
 
     return fuse_main(argc, argv, &operations, &private_data);
 }
