@@ -8,9 +8,9 @@
 
 #include <cstdio>
 #include <cstring>
+#include <iomanip>
 #include <memory>
 #include <string>
-#include <iomanip>
 
 #include "includes/hello.grpc.pb.h"
 #include "includes/hello.pb.h"
@@ -192,8 +192,8 @@ class GRPCClient {
         return tmp_fd;
     }
 
-    int c_write(const char *path, const char *buffer, size_t size,
-                off_t offset, struct fuse_file_info *fi) {
+    int c_write(const char *path, const char *buffer, size_t size, off_t offset,
+                struct fuse_file_info *fi) {
         auto cache_path = to_cache_path(path);
         auto [tmp_fd, tmp_name] = get_tmp_file();
         auto fd1 = fi->fh;
@@ -209,44 +209,44 @@ class GRPCClient {
         return ret;
     }
 
-//    int c_flush(const char* path) {
-//        printf("[flush] %s\n", path);
-//    }
-//
-    int c_unlink(const char* path) {
+    //    int c_flush(const char* path) {
+    //        printf("[flush] %s\n", path);
+    //    }
+    //
+    int c_unlink(const char *path) {
         printf("[unlink] %s\n", path);
 
         aafs::PathRequest request;
         request.set_path(path);
 
         aafs::StatusResponse reply;
-	    ClientContext context;
+        ClientContext context;
 
-        //Status status = stub_->s_unlink(&context, request, &reply);
+        // Status status = stub_->s_unlink(&context, request, &reply);
         Status status = stub_->s_mkdir(&context, request, &reply);
         if (!status.ok()) {
             return -ENONET;
         }
 
-        //to do, what to do for the file in cache.
+        // to do, what to do for the file in cache.
         return reply.ret();
     }
 
-    int c_mkdir(const char* path, mode_t mode) {
-    	printf("[mkdir] %s\n", path);
-	    aafs::PathRequest request;
+    int c_mkdir(const char *path, mode_t mode) {
+        printf("[mkdir] %s\n", path);
+        aafs::PathRequest request;
         request.set_path(path);
-	    aafs::StatusResponse reply;
-	    ClientContext context;
+        aafs::StatusResponse reply;
+        ClientContext context;
         Status status = stub_->s_mkdir(&context, request, &reply);
         if (!status.ok()) {
             return -ENONET;
         }
         // TODO: put in cache/ cache check?
         return reply.ret();
-	}
+    }
 
-    int c_rmdir(const char* path){
+    int c_rmdir(const char *path) {
         printf("[rmdir] %s\n", path);
         aafs::PathRequest request;
         request.set_path(path);

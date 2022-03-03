@@ -36,29 +36,29 @@ static int do_read(const char* path, char* buffer, size_t size, off_t offset,
     return ret;
 }
 
-static int do_write(const char *path, const char *buffer, size_t size,
-            off_t offset, struct fuse_file_info *fi) {
+static int do_write(const char* path, const char* buffer, size_t size,
+                    off_t offset, struct fuse_file_info* fi) {
     return GET_PDATA->client.c_write(path, buffer, size, offset, fi);
 }
 
-static int do_creat(const char * path, mode_t mode, struct fuse_file_info *fi) {
+static int do_creat(const char* path, mode_t mode, struct fuse_file_info* fi) {
     return GET_PDATA->client.c_creat(path, mode, fi);
 }
 
 static int do_mkdir(const char* path, mode_t mode) {
-	return GET_PDATA->client.c_mkdir(path, mode);
+    return GET_PDATA->client.c_mkdir(path, mode);
 }
 
 static int do_rmdir(const char* path) {
-	return GET_PDATA->client.c_rmdir(path);
+    return GET_PDATA->client.c_rmdir(path);
 }
 
-//static int do_flush(const char * path, struct fuse_file_info *fi) {
-//    return GET_PDATA->client.c_flush(path);
-//}
+// static int do_flush(const char * path, struct fuse_file_info *fi) {
+//     return GET_PDATA->client.c_flush(path);
+// }
 //
 
-static int do_unlink(const char * path) {
+static int do_unlink(const char* path) {
     return GET_PDATA->client.c_unlink(path);
 }
 
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
     operations.rmdir = do_rmdir;
     operations.write = do_write;
     operations.create = do_creat;
-//    operations.flush = do_flush;
+    //    operations.flush = do_flush;
     operations.unlink = do_unlink;
 
     return fuse_main(argc, argv, &operations, &private_data);
