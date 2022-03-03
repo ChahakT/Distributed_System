@@ -111,7 +111,7 @@ class GRPCClient {
     }
 
     // TODO: Maybe we need to deal with server file change between lstat and
-    // download?
+    // download ? No its getting covered with file not in cache case.
     int c_open(const char *path, struct fuse_file_info *fi) {
         printf("[open] %s\n", path);
         struct stat client_st {};
@@ -173,6 +173,90 @@ class GRPCClient {
         RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
         fi->fh = tmp_fd;
         return 0;
+    }
+
+    int c_creat(const char *path, mode_t mode, struct fuse_file_info *fi) {
+        printf("[creat] %s\n", path);
+        auto cache_path = to_cache_path(path);
+        aafs::PathRequest request;
+        request.set_path(path);
+        aafs::StatusResponse reply;
+        ClientContext context;
+        Status status = stub_->s_creat(&context, request, &reply);
+        if (!status.ok()) {
+            return -ENONET;
+        }
+        auto [tmp_fd, tmp_name] = get_tmp_file();
+        RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
+        fi->fh = tmp_fd;
+        return tmp_fd;
+    }
+
+    int c_write(const char *path, const char *buffer, size_t size,
+                off_t offset, struct fuse_file_info *fi) {
+        auto cache_path = to_cache_path(path);
+        auto [tmp_fd, tmp_name] = get_tmp_file();
+        auto fd1 = fi->fh;
+        char buf[4096];
+        memset(buf, 0, sizeof(buf));
+        ssize_t n;
+        while ((n = read(fd1, buf, sizeof(buf))) > 0) {
+            write(tmp_fd, buf, n);
+        }
+        size_t ret;
+        RET_ERR(ret = pwrite(tmp_fd, buffer, size, offset));
+        RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
+        return ret;
+    }
+
+//    int c_flush(const char* path) {
+//        printf("[flush] %s\n", path);
+//    }
+//
+    // int c_unlink(const char* path) {
+    //     printf("[unlink] %s\n", path);
+
+    //     aafs::PathRequest request;
+    //     request.set_path(path);
+
+    //     aafs::StatusResponse reply;
+	//     ClientContext context;
+
+    //     Status status = stub_->s_unlink(&context, request, &reply);
+    //     if (!status.ok()) {
+    //         return -ENONET;
+    //     }
+
+    //     //to do, what to do for the file in cache.
+    //     return reply.ret();
+    // }
+
+    int c_mkdir(const char* path, mode_t mode) {
+    	printf("[mkdir] %s\n", path);
+	    aafs::PathRequest request;
+        request.set_path(path);
+	    aafs::StatusResponse reply;
+	    ClientContext context;
+        Status status = stub_->s_mkdir(&context, request, &reply);
+        if (!status.ok()) {
+            return -ENONET;
+        }
+        // TODO: put in cache/ cache check?
+        return reply.ret();
+	}
+
+    int c_rmdir(const char* path){
+        printf("[rmdir] %s\n", path);
+        aafs::PathRequest request;
+        request.set_path(path);
+        aafs::StatusResponse reply;
+        ClientContext context;
+        Status status = stub_->s_rmdir(&context, request, &reply);
+        if (!status.ok()) {
+            return -ENONET;
+        }
+        // TODO: remove from cache
+        return reply.ret();
     }
 
    private:
