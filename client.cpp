@@ -58,7 +58,7 @@ static int do_rmdir(const char* path) {
 //}
 //
 
-static int do_unlink(const char * path {
+static int do_unlink(const char * path) {
     return GET_PDATA->client.c_unlink(path);
 }
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     operations.write = do_write;
     operations.create = do_creat;
 //    operations.flush = do_flush;
-//    operations.unlink = do_unlink;
+    operations.unlink = do_unlink;
 
     return fuse_main(argc, argv, &operations, &private_data);
 }

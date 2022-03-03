@@ -213,23 +213,24 @@ class GRPCClient {
 //        printf("[flush] %s\n", path);
 //    }
 //
-    // int c_unlink(const char* path) {
-    //     printf("[unlink] %s\n", path);
+    int c_unlink(const char* path) {
+        printf("[unlink] %s\n", path);
 
-    //     aafs::PathRequest request;
-    //     request.set_path(path);
+        aafs::PathRequest request;
+        request.set_path(path);
 
-    //     aafs::StatusResponse reply;
-	//     ClientContext context;
+        aafs::StatusResponse reply;
+	    ClientContext context;
 
-    //     Status status = stub_->s_unlink(&context, request, &reply);
-    //     if (!status.ok()) {
-    //         return -ENONET;
-    //     }
+        //Status status = stub_->s_unlink(&context, request, &reply);
+        Status status = stub_->s_mkdir(&context, request, &reply);
+        if (!status.ok()) {
+            return -ENONET;
+        }
 
-    //     //to do, what to do for the file in cache.
-    //     return reply.ret();
-    // }
+        //to do, what to do for the file in cache.
+        return reply.ret();
+    }
 
     int c_mkdir(const char* path, mode_t mode) {
     	printf("[mkdir] %s\n", path);
