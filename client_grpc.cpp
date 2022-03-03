@@ -255,9 +255,6 @@ class GRPCClient {
         if (!status.ok()) {
             return -ENONET;
         }
-        if (reply.ret() < 0) {
-            return reply.ret();
-        }
         // TODO: put in cache/ cache check?
         return reply.ret();
     }
@@ -271,9 +268,6 @@ class GRPCClient {
         Status status = stub_->s_rmdir(&context, request, &reply);
         if (!status.ok()) {
             return -ENONET;
-        }
-        if (reply.ret() < 0) {
-            return reply.ret();
         }
         // TODO: remove from cache
         return reply.ret();
