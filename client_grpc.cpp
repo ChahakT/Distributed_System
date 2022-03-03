@@ -158,6 +158,7 @@ class GRPCClient {
         }
 
         auto [tmp_fd, tmp_name] = get_tmp_file();
+        RET_ERR(tmp_fd);
         while (reader->Read(&content)) {
             auto ret =
                 write(tmp_fd, content.data().c_str(), content.data().size());
@@ -195,10 +196,13 @@ class GRPCClient {
         if (!status.ok()) {
             return -ENONET;
         }
+        if (reply.ret() < 0) {
+            return reply.ret();
+        }
         auto [tmp_fd, tmp_name] = get_tmp_file();
-        RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
+        rename(tmp_name.c_str(), cache_path.c_str());
         fi->fh = tmp_fd;
-        return tmp_fd;
+        return 0;
     }
 
     int c_write(const char *path, const char *buffer, size_t size, off_t offset,

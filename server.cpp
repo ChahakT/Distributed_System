@@ -102,6 +102,10 @@ class gRPCServiceImpl final : public gRPCService::Service {
     Status s_creat(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {
         int ret = creat(to_server_path(req->path()).c_str(), 0777);
+        if (ret == -1) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
         reply->set_ret(ret);
         return Status::OK;
     }
