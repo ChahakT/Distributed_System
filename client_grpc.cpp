@@ -110,8 +110,6 @@ class GRPCClient {
         return 0;
     }
 
-    // TODO: Maybe we need to deal with server file change between lstat and
-    // download ? No its getting covered with file not in cache case.
     int c_open(const char *path, struct fuse_file_info *fi) {
         printf("[open] %s\n", path);
         struct stat client_st {};
@@ -147,15 +145,25 @@ class GRPCClient {
         aafs::PathRequest request;
         request.set_path(path);
         printf("[download] %s\n", path);
-        std::unique_ptr<grpc::ClientReader<aafs::FileContent>> reader(
+        std::unique_ptr<grpc::ClientReader<aafs::OpenResponse>> reader(
             stub_->s_download(&context, request));
-        aafs::FileContent content;
+        aafs::OpenResponse content;
+        int atime, mtime;
+        reader->Read(&content);
+        if (content.has_time()) {
+            atime = content.time().atime();
+            mtime = content.time().mtime();
+        } else {
+            return -ENONET;
+        }
+
         auto [tmp_fd, tmp_name] = get_tmp_file();
         while (reader->Read(&content)) {
             auto ret =
                 write(tmp_fd, content.data().c_str(), content.data().size());
             if (ret < 0) {
                 close(tmp_fd);
+                unlink(tmp_name.c_str());
                 return -errno;
             }
         }
@@ -167,9 +175,10 @@ class GRPCClient {
         }
 
         struct utimbuf times {};
-        times.actime = server_st.st_atime;
-        times.modtime = server_st.st_mtime;
+        times.actime = atime;
+        times.modtime = mtime;
         RET_ERR(utime(tmp_name.c_str(), &times));
+        fsync(tmp_fd);
         RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
         fi->fh = tmp_fd;
         return 0;

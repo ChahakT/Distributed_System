@@ -25,6 +25,7 @@ static const char* gRPCService_method_names[] = {
   "/aafs.gRPCService/s_getattr",
   "/aafs.gRPCService/s_readdir",
   "/aafs.gRPCService/s_download",
+  "/aafs.gRPCService/s_unlink",
   "/aafs.gRPCService/s_mkdir",
   "/aafs.gRPCService/s_rmdir",
   "/aafs.gRPCService/s_creat",
@@ -40,9 +41,10 @@ gRPCService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channe
   : channel_(channel), rpcmethod_s_getattr_(gRPCService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_s_readdir_(gRPCService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_s_download_(gRPCService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_s_mkdir_(gRPCService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_s_rmdir_(gRPCService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_s_creat_(gRPCService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_unlink_(gRPCService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_mkdir_(gRPCService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_rmdir_(gRPCService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_s_creat_(gRPCService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status gRPCService::Stub::s_getattr(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::GetAttrResponse* response) {
@@ -91,20 +93,43 @@ void gRPCService::Stub::async::s_readdir(::grpc::ClientContext* context, const :
   return result;
 }
 
-::grpc::ClientReader< ::aafs::FileContent>* gRPCService::Stub::s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
-  return ::grpc::internal::ClientReaderFactory< ::aafs::FileContent>::Create(channel_.get(), rpcmethod_s_download_, context, request);
+::grpc::ClientReader< ::aafs::OpenResponse>* gRPCService::Stub::s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
+  return ::grpc::internal::ClientReaderFactory< ::aafs::OpenResponse>::Create(channel_.get(), rpcmethod_s_download_, context, request);
 }
 
-void gRPCService::Stub::async::s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::FileContent>* reactor) {
-  ::grpc::internal::ClientCallbackReaderFactory< ::aafs::FileContent>::Create(stub_->channel_.get(), stub_->rpcmethod_s_download_, context, request, reactor);
+void gRPCService::Stub::async::s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::OpenResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::aafs::OpenResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_s_download_, context, request, reactor);
 }
 
-::grpc::ClientAsyncReader< ::aafs::FileContent>* gRPCService::Stub::Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::aafs::FileContent>::Create(channel_.get(), cq, rpcmethod_s_download_, context, request, true, tag);
+::grpc::ClientAsyncReader< ::aafs::OpenResponse>* gRPCService::Stub::Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::aafs::OpenResponse>::Create(channel_.get(), cq, rpcmethod_s_download_, context, request, true, tag);
 }
 
-::grpc::ClientAsyncReader< ::aafs::FileContent>* gRPCService::Stub::PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::aafs::FileContent>::Create(channel_.get(), cq, rpcmethod_s_download_, context, request, false, nullptr);
+::grpc::ClientAsyncReader< ::aafs::OpenResponse>* gRPCService::Stub::PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::aafs::OpenResponse>::Create(channel_.get(), cq, rpcmethod_s_download_, context, request, false, nullptr);
+}
+
+::grpc::Status gRPCService::Stub::s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::aafs::PathRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_s_unlink_, context, request, response);
+}
+
+void gRPCService::Stub::async::s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::aafs::PathRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_unlink_, context, request, response, std::move(f));
+}
+
+void gRPCService::Stub::async::s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_s_unlink_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* gRPCService::Stub::PrepareAsyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::aafs::StatusResponse, ::aafs::PathRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_s_unlink_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* gRPCService::Stub::Asyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncs_unlinkRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 ::grpc::Status gRPCService::Stub::s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) {
@@ -200,11 +225,11 @@ gRPCService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[2],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< gRPCService::Service, ::aafs::PathRequest, ::aafs::FileContent>(
+      new ::grpc::internal::ServerStreamingHandler< gRPCService::Service, ::aafs::PathRequest, ::aafs::OpenResponse>(
           [](gRPCService::Service* service,
              ::grpc::ServerContext* ctx,
              const ::aafs::PathRequest* req,
-             ::grpc::ServerWriter<::aafs::FileContent>* writer) {
+             ::grpc::ServerWriter<::aafs::OpenResponse>* writer) {
                return service->s_download(ctx, req, writer);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
@@ -215,7 +240,7 @@ gRPCService::Service::Service() {
              ::grpc::ServerContext* ctx,
              const ::aafs::PathRequest* req,
              ::aafs::StatusResponse* resp) {
-               return service->s_mkdir(ctx, req, resp);
+               return service->s_unlink(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[4],
@@ -225,10 +250,20 @@ gRPCService::Service::Service() {
              ::grpc::ServerContext* ctx,
              const ::aafs::PathRequest* req,
              ::aafs::StatusResponse* resp) {
-               return service->s_rmdir(ctx, req, resp);
+               return service->s_mkdir(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       gRPCService_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::aafs::PathRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](gRPCService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::aafs::PathRequest* req,
+             ::aafs::StatusResponse* resp) {
+               return service->s_rmdir(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      gRPCService_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< gRPCService::Service, ::aafs::PathRequest, ::aafs::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](gRPCService::Service* service,
@@ -256,10 +291,17 @@ gRPCService::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status gRPCService::Service::s_download(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::grpc::ServerWriter< ::aafs::FileContent>* writer) {
+::grpc::Status gRPCService::Service::s_download(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::grpc::ServerWriter< ::aafs::OpenResponse>* writer) {
   (void) context;
   (void) request;
   (void) writer;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status gRPCService::Service::s_unlink(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

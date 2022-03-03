@@ -46,7 +46,7 @@ struct TableStruct_hello_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -54,12 +54,15 @@ struct TableStruct_hello_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_hello_2eproto;
 namespace aafs {
-class FileContent;
-struct FileContentDefaultTypeInternal;
-extern FileContentDefaultTypeInternal _FileContent_default_instance_;
 class GetAttrResponse;
 struct GetAttrResponseDefaultTypeInternal;
 extern GetAttrResponseDefaultTypeInternal _GetAttrResponse_default_instance_;
+class MATime;
+struct MATimeDefaultTypeInternal;
+extern MATimeDefaultTypeInternal _MATime_default_instance_;
+class OpenResponse;
+struct OpenResponseDefaultTypeInternal;
+extern OpenResponseDefaultTypeInternal _OpenResponse_default_instance_;
 class PathRequest;
 struct PathRequestDefaultTypeInternal;
 extern PathRequestDefaultTypeInternal _PathRequest_default_instance_;
@@ -74,8 +77,9 @@ struct StatusResponseDefaultTypeInternal;
 extern StatusResponseDefaultTypeInternal _StatusResponse_default_instance_;
 }  // namespace aafs
 PROTOBUF_NAMESPACE_OPEN
-template<> ::aafs::FileContent* Arena::CreateMaybeMessage<::aafs::FileContent>(Arena*);
 template<> ::aafs::GetAttrResponse* Arena::CreateMaybeMessage<::aafs::GetAttrResponse>(Arena*);
+template<> ::aafs::MATime* Arena::CreateMaybeMessage<::aafs::MATime>(Arena*);
+template<> ::aafs::OpenResponse* Arena::CreateMaybeMessage<::aafs::OpenResponse>(Arena*);
 template<> ::aafs::PathRequest* Arena::CreateMaybeMessage<::aafs::PathRequest>(Arena*);
 template<> ::aafs::ReadDirResponse* Arena::CreateMaybeMessage<::aafs::ReadDirResponse>(Arena*);
 template<> ::aafs::Stat* Arena::CreateMaybeMessage<::aafs::Stat>(Arena*);
@@ -830,24 +834,24 @@ class ReadDirResponse final :
 };
 // -------------------------------------------------------------------
 
-class FileContent final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.FileContent) */ {
+class MATime final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.MATime) */ {
  public:
-  inline FileContent() : FileContent(nullptr) {}
-  ~FileContent() override;
-  explicit constexpr FileContent(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline MATime() : MATime(nullptr) {}
+  ~MATime() override;
+  explicit constexpr MATime(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  FileContent(const FileContent& from);
-  FileContent(FileContent&& from) noexcept
-    : FileContent() {
+  MATime(const MATime& from);
+  MATime(MATime&& from) noexcept
+    : MATime() {
     *this = ::std::move(from);
   }
 
-  inline FileContent& operator=(const FileContent& from) {
+  inline MATime& operator=(const MATime& from) {
     CopyFrom(from);
     return *this;
   }
-  inline FileContent& operator=(FileContent&& from) noexcept {
+  inline MATime& operator=(MATime&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -870,20 +874,20 @@ class FileContent final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const FileContent& default_instance() {
+  static const MATime& default_instance() {
     return *internal_default_instance();
   }
-  static inline const FileContent* internal_default_instance() {
-    return reinterpret_cast<const FileContent*>(
-               &_FileContent_default_instance_);
+  static inline const MATime* internal_default_instance() {
+    return reinterpret_cast<const MATime*>(
+               &_MATime_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(FileContent& a, FileContent& b) {
+  friend void swap(MATime& a, MATime& b) {
     a.Swap(&b);
   }
-  inline void Swap(FileContent* other) {
+  inline void Swap(MATime* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -896,7 +900,7 @@ class FileContent final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(FileContent* other) {
+  void UnsafeArenaSwap(MATime* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -904,13 +908,13 @@ class FileContent final :
 
   // implements Message ----------------------------------------------
 
-  FileContent* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<FileContent>(arena);
+  MATime* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<MATime>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const FileContent& from);
+  void CopyFrom(const MATime& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const FileContent& from);
+  void MergeFrom(const MATime& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -927,15 +931,15 @@ class FileContent final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(FileContent* other);
+  void InternalSwap(MATime* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "aafs.FileContent";
+    return "aafs.MATime";
   }
   protected:
-  explicit FileContent(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit MATime(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -952,9 +956,195 @@ class FileContent final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDataFieldNumber = 1,
+    kAtimeFieldNumber = 1,
+    kMtimeFieldNumber = 2,
   };
-  // bytes data = 1;
+  // int64 atime = 1;
+  void clear_atime();
+  int64_t atime() const;
+  void set_atime(int64_t value);
+  private:
+  int64_t _internal_atime() const;
+  void _internal_set_atime(int64_t value);
+  public:
+
+  // int64 mtime = 2;
+  void clear_mtime();
+  int64_t mtime() const;
+  void set_mtime(int64_t value);
+  private:
+  int64_t _internal_mtime() const;
+  void _internal_set_mtime(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:aafs.MATime)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int64_t atime_;
+  int64_t mtime_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_hello_2eproto;
+};
+// -------------------------------------------------------------------
+
+class OpenResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:aafs.OpenResponse) */ {
+ public:
+  inline OpenResponse() : OpenResponse(nullptr) {}
+  ~OpenResponse() override;
+  explicit constexpr OpenResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  OpenResponse(const OpenResponse& from);
+  OpenResponse(OpenResponse&& from) noexcept
+    : OpenResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline OpenResponse& operator=(const OpenResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OpenResponse& operator=(OpenResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const OpenResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  enum TestOneofCase {
+    kTime = 1,
+    kData = 2,
+    TEST_ONEOF_NOT_SET = 0,
+  };
+
+  static inline const OpenResponse* internal_default_instance() {
+    return reinterpret_cast<const OpenResponse*>(
+               &_OpenResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(OpenResponse& a, OpenResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OpenResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(OpenResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  OpenResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OpenResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const OpenResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const OpenResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OpenResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "aafs.OpenResponse";
+  }
+  protected:
+  explicit OpenResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTimeFieldNumber = 1,
+    kDataFieldNumber = 2,
+  };
+  // .aafs.MATime time = 1;
+  bool has_time() const;
+  private:
+  bool _internal_has_time() const;
+  public:
+  void clear_time();
+  const ::aafs::MATime& time() const;
+  PROTOBUF_NODISCARD ::aafs::MATime* release_time();
+  ::aafs::MATime* mutable_time();
+  void set_allocated_time(::aafs::MATime* time);
+  private:
+  const ::aafs::MATime& _internal_time() const;
+  ::aafs::MATime* _internal_mutable_time();
+  public:
+  void unsafe_arena_set_allocated_time(
+      ::aafs::MATime* time);
+  ::aafs::MATime* unsafe_arena_release_time();
+
+  // bytes data = 2;
+  bool has_data() const;
+  private:
+  bool _internal_has_data() const;
+  public:
   void clear_data();
   const std::string& data() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -968,15 +1158,29 @@ class FileContent final :
   std::string* _internal_mutable_data();
   public:
 
-  // @@protoc_insertion_point(class_scope:aafs.FileContent)
+  void clear_test_oneof();
+  TestOneofCase test_oneof_case() const;
+  // @@protoc_insertion_point(class_scope:aafs.OpenResponse)
  private:
   class _Internal;
+  void set_has_time();
+  void set_has_data();
+
+  inline bool has_test_oneof() const;
+  inline void clear_has_test_oneof();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
+  union TestOneofUnion {
+    constexpr TestOneofUnion() : _constinit_{} {}
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+    ::aafs::MATime* time_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
+  } test_oneof_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  uint32_t _oneof_case_[1];
+
   friend struct ::TableStruct_hello_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1029,7 +1233,7 @@ class StatusResponse final :
                &_StatusResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(StatusResponse& a, StatusResponse& b) {
     a.Swap(&b);
@@ -1626,59 +1830,217 @@ ReadDirResponse::mutable_entries() {
 
 // -------------------------------------------------------------------
 
-// FileContent
+// MATime
 
-// bytes data = 1;
-inline void FileContent::clear_data() {
-  data_.ClearToEmpty();
+// int64 atime = 1;
+inline void MATime::clear_atime() {
+  atime_ = int64_t{0};
 }
-inline const std::string& FileContent::data() const {
-  // @@protoc_insertion_point(field_get:aafs.FileContent.data)
+inline int64_t MATime::_internal_atime() const {
+  return atime_;
+}
+inline int64_t MATime::atime() const {
+  // @@protoc_insertion_point(field_get:aafs.MATime.atime)
+  return _internal_atime();
+}
+inline void MATime::_internal_set_atime(int64_t value) {
+  
+  atime_ = value;
+}
+inline void MATime::set_atime(int64_t value) {
+  _internal_set_atime(value);
+  // @@protoc_insertion_point(field_set:aafs.MATime.atime)
+}
+
+// int64 mtime = 2;
+inline void MATime::clear_mtime() {
+  mtime_ = int64_t{0};
+}
+inline int64_t MATime::_internal_mtime() const {
+  return mtime_;
+}
+inline int64_t MATime::mtime() const {
+  // @@protoc_insertion_point(field_get:aafs.MATime.mtime)
+  return _internal_mtime();
+}
+inline void MATime::_internal_set_mtime(int64_t value) {
+  
+  mtime_ = value;
+}
+inline void MATime::set_mtime(int64_t value) {
+  _internal_set_mtime(value);
+  // @@protoc_insertion_point(field_set:aafs.MATime.mtime)
+}
+
+// -------------------------------------------------------------------
+
+// OpenResponse
+
+// .aafs.MATime time = 1;
+inline bool OpenResponse::_internal_has_time() const {
+  return test_oneof_case() == kTime;
+}
+inline bool OpenResponse::has_time() const {
+  return _internal_has_time();
+}
+inline void OpenResponse::set_has_time() {
+  _oneof_case_[0] = kTime;
+}
+inline void OpenResponse::clear_time() {
+  if (_internal_has_time()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete test_oneof_.time_;
+    }
+    clear_has_test_oneof();
+  }
+}
+inline ::aafs::MATime* OpenResponse::release_time() {
+  // @@protoc_insertion_point(field_release:aafs.OpenResponse.time)
+  if (_internal_has_time()) {
+    clear_has_test_oneof();
+      ::aafs::MATime* temp = test_oneof_.time_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    test_oneof_.time_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::aafs::MATime& OpenResponse::_internal_time() const {
+  return _internal_has_time()
+      ? *test_oneof_.time_
+      : reinterpret_cast< ::aafs::MATime&>(::aafs::_MATime_default_instance_);
+}
+inline const ::aafs::MATime& OpenResponse::time() const {
+  // @@protoc_insertion_point(field_get:aafs.OpenResponse.time)
+  return _internal_time();
+}
+inline ::aafs::MATime* OpenResponse::unsafe_arena_release_time() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:aafs.OpenResponse.time)
+  if (_internal_has_time()) {
+    clear_has_test_oneof();
+    ::aafs::MATime* temp = test_oneof_.time_;
+    test_oneof_.time_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void OpenResponse::unsafe_arena_set_allocated_time(::aafs::MATime* time) {
+  clear_test_oneof();
+  if (time) {
+    set_has_time();
+    test_oneof_.time_ = time;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:aafs.OpenResponse.time)
+}
+inline ::aafs::MATime* OpenResponse::_internal_mutable_time() {
+  if (!_internal_has_time()) {
+    clear_test_oneof();
+    set_has_time();
+    test_oneof_.time_ = CreateMaybeMessage< ::aafs::MATime >(GetArenaForAllocation());
+  }
+  return test_oneof_.time_;
+}
+inline ::aafs::MATime* OpenResponse::mutable_time() {
+  ::aafs::MATime* _msg = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:aafs.OpenResponse.time)
+  return _msg;
+}
+
+// bytes data = 2;
+inline bool OpenResponse::_internal_has_data() const {
+  return test_oneof_case() == kData;
+}
+inline bool OpenResponse::has_data() const {
+  return _internal_has_data();
+}
+inline void OpenResponse::set_has_data() {
+  _oneof_case_[0] = kData;
+}
+inline void OpenResponse::clear_data() {
+  if (_internal_has_data()) {
+    test_oneof_.data_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+    clear_has_test_oneof();
+  }
+}
+inline const std::string& OpenResponse::data() const {
+  // @@protoc_insertion_point(field_get:aafs.OpenResponse.data)
   return _internal_data();
 }
 template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void FileContent::set_data(ArgT0&& arg0, ArgT... args) {
- 
- data_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:aafs.FileContent.data)
+inline void OpenResponse::set_data(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_data()) {
+    clear_test_oneof();
+    set_has_data();
+    test_oneof_.data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  test_oneof_.data_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:aafs.OpenResponse.data)
 }
-inline std::string* FileContent::mutable_data() {
+inline std::string* OpenResponse::mutable_data() {
   std::string* _s = _internal_mutable_data();
-  // @@protoc_insertion_point(field_mutable:aafs.FileContent.data)
+  // @@protoc_insertion_point(field_mutable:aafs.OpenResponse.data)
   return _s;
 }
-inline const std::string& FileContent::_internal_data() const {
-  return data_.Get();
+inline const std::string& OpenResponse::_internal_data() const {
+  if (_internal_has_data()) {
+    return test_oneof_.data_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
 }
-inline void FileContent::_internal_set_data(const std::string& value) {
-  
-  data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+inline void OpenResponse::_internal_set_data(const std::string& value) {
+  if (!_internal_has_data()) {
+    clear_test_oneof();
+    set_has_data();
+    test_oneof_.data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  test_oneof_.data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* FileContent::_internal_mutable_data() {
-  
-  return data_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+inline std::string* OpenResponse::_internal_mutable_data() {
+  if (!_internal_has_data()) {
+    clear_test_oneof();
+    set_has_data();
+    test_oneof_.data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return test_oneof_.data_.Mutable(
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* FileContent::release_data() {
-  // @@protoc_insertion_point(field_release:aafs.FileContent.data)
-  return data_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void FileContent::set_allocated_data(std::string* data) {
-  if (data != nullptr) {
-    
+inline std::string* OpenResponse::release_data() {
+  // @@protoc_insertion_point(field_release:aafs.OpenResponse.data)
+  if (_internal_has_data()) {
+    clear_has_test_oneof();
+    return test_oneof_.data_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
   } else {
-    
+    return nullptr;
   }
-  data_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), data,
-      GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (data_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+}
+inline void OpenResponse::set_allocated_data(std::string* data) {
+  if (has_test_oneof()) {
+    clear_test_oneof();
   }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:aafs.FileContent.data)
+  if (data != nullptr) {
+    set_has_data();
+    test_oneof_.data_.UnsafeSetDefault(data);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
+    if (arena != nullptr) {
+      arena->Own(data);
+    }
+  }
+  // @@protoc_insertion_point(field_set_allocated:aafs.OpenResponse.data)
 }
 
+inline bool OpenResponse::has_test_oneof() const {
+  return test_oneof_case() != TEST_ONEOF_NOT_SET;
+}
+inline void OpenResponse::clear_has_test_oneof() {
+  _oneof_case_[0] = TEST_ONEOF_NOT_SET;
+}
+inline OpenResponse::TestOneofCase OpenResponse::test_oneof_case() const {
+  return OpenResponse::TestOneofCase(_oneof_case_[0]);
+}
 // -------------------------------------------------------------------
 
 // StatusResponse
@@ -1706,6 +2068,8 @@ inline void StatusResponse::set_ret(int32_t value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

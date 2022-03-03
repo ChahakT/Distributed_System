@@ -66,17 +66,26 @@ class gRPCServiceImpl final : public gRPCService::Service {
     }
 
     Status s_download(ServerContext *context, const aafs::PathRequest *req,
-                      ServerWriter<aafs::FileContent> *writer) override {
+                      ServerWriter<aafs::OpenResponse> *writer) override {
         int fd = open(to_server_path(req->path()).c_str(), O_RDONLY);
         if (fd == -1) {
             return Status::CANCELLED;
         }
-        aafs::FileContent dl;
+        struct stat st {};
+        fstat(fd, &st);
+        aafs::OpenResponse reply;
+
+        auto matime = std::make_unique<aafs::MATime>();
+        matime->set_atime(st.st_atime);
+        matime->set_mtime(st.st_mtime);
+        reply.set_allocated_time(matime.release());
+        writer->Write(reply);
+
         ssize_t n;
         char buf[4096];
         while ((n = read(fd, buf, sizeof(buf))) > 0) {
-            dl.set_data(buf, n);
-            writer->Write(dl);
+            reply.set_data(buf, n);
+            writer->Write(reply);
         }
         return Status::OK;
     }

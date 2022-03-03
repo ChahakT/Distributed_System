@@ -49,14 +49,21 @@ class gRPCService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::ReadDirResponse>> PrepareAsyncs_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::ReadDirResponse>>(PrepareAsyncs_readdirRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderInterface< ::aafs::FileContent>> s_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReaderInterface< ::aafs::FileContent>>(s_downloadRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::aafs::OpenResponse>> s_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::aafs::OpenResponse>>(s_downloadRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>> Asyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>>(Asyncs_downloadRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>> Asyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>>(Asyncs_downloadRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>> PrepareAsyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>>(PrepareAsyncs_downloadRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>> PrepareAsyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>>(PrepareAsyncs_downloadRaw(context, request, cq));
+    }
+    virtual ::grpc::Status s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> Asyncs_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>>(Asyncs_unlinkRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> PrepareAsyncs_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>>(PrepareAsyncs_unlinkRaw(context, request, cq));
     }
     virtual ::grpc::Status s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>> Asyncs_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
@@ -86,7 +93,9 @@ class gRPCService final {
       virtual void s_getattr(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void s_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::ReadDirResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void s_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::FileContent>* reactor) = 0;
+      virtual void s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::OpenResponse>* reactor) = 0;
+      virtual void s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void s_rmdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
@@ -102,9 +111,11 @@ class gRPCService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::GetAttrResponse>* PrepareAsyncs_getattrRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::ReadDirResponse>* Asyncs_readdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::ReadDirResponse>* PrepareAsyncs_readdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderInterface< ::aafs::FileContent>* s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>* Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::aafs::FileContent>* PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::aafs::OpenResponse>* s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>* Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::aafs::OpenResponse>* PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* Asyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* PrepareAsyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* Asyncs_mkdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* PrepareAsyncs_mkdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::aafs::StatusResponse>* Asyncs_rmdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -129,14 +140,21 @@ class gRPCService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::ReadDirResponse>> PrepareAsyncs_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::ReadDirResponse>>(PrepareAsyncs_readdirRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReader< ::aafs::FileContent>> s_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReader< ::aafs::FileContent>>(s_downloadRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReader< ::aafs::OpenResponse>> s_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::aafs::OpenResponse>>(s_downloadRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::FileContent>> Asyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::FileContent>>(Asyncs_downloadRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::OpenResponse>> Asyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::OpenResponse>>(Asyncs_downloadRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::FileContent>> PrepareAsyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::FileContent>>(PrepareAsyncs_downloadRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::OpenResponse>> PrepareAsyncs_download(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::aafs::OpenResponse>>(PrepareAsyncs_downloadRaw(context, request, cq));
+    }
+    ::grpc::Status s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> Asyncs_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>>(Asyncs_unlinkRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> PrepareAsyncs_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>>(PrepareAsyncs_unlinkRaw(context, request, cq));
     }
     ::grpc::Status s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::aafs::StatusResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>> Asyncs_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) {
@@ -166,7 +184,9 @@ class gRPCService final {
       void s_getattr(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::GetAttrResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void s_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::ReadDirResponse* response, std::function<void(::grpc::Status)>) override;
       void s_readdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::ReadDirResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::FileContent>* reactor) override;
+      void s_download(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::grpc::ClientReadReactor< ::aafs::OpenResponse>* reactor) override;
+      void s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) override;
+      void s_unlink(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) override;
       void s_mkdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void s_rmdir(::grpc::ClientContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response, std::function<void(::grpc::Status)>) override;
@@ -188,9 +208,11 @@ class gRPCService final {
     ::grpc::ClientAsyncResponseReader< ::aafs::GetAttrResponse>* PrepareAsyncs_getattrRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::ReadDirResponse>* Asyncs_readdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::ReadDirResponse>* PrepareAsyncs_readdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReader< ::aafs::FileContent>* s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) override;
-    ::grpc::ClientAsyncReader< ::aafs::FileContent>* Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReader< ::aafs::FileContent>* PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::aafs::OpenResponse>* s_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request) override;
+    ::grpc::ClientAsyncReader< ::aafs::OpenResponse>* Asyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::aafs::OpenResponse>* PrepareAsyncs_downloadRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* Asyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* PrepareAsyncs_unlinkRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* Asyncs_mkdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* PrepareAsyncs_mkdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::aafs::StatusResponse>* Asyncs_rmdirRaw(::grpc::ClientContext* context, const ::aafs::PathRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -200,6 +222,7 @@ class gRPCService final {
     const ::grpc::internal::RpcMethod rpcmethod_s_getattr_;
     const ::grpc::internal::RpcMethod rpcmethod_s_readdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_download_;
+    const ::grpc::internal::RpcMethod rpcmethod_s_unlink_;
     const ::grpc::internal::RpcMethod rpcmethod_s_mkdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_rmdir_;
     const ::grpc::internal::RpcMethod rpcmethod_s_creat_;
@@ -212,7 +235,8 @@ class gRPCService final {
     virtual ~Service();
     virtual ::grpc::Status s_getattr(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::GetAttrResponse* response);
     virtual ::grpc::Status s_readdir(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::ReadDirResponse* response);
-    virtual ::grpc::Status s_download(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::grpc::ServerWriter< ::aafs::FileContent>* writer);
+    virtual ::grpc::Status s_download(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::grpc::ServerWriter< ::aafs::OpenResponse>* writer);
+    virtual ::grpc::Status s_unlink(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
     virtual ::grpc::Status s_mkdir(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
     virtual ::grpc::Status s_rmdir(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
     virtual ::grpc::Status s_creat(::grpc::ServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response);
@@ -269,12 +293,32 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Requests_download(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncWriter< ::aafs::FileContent>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Requests_download(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncWriter< ::aafs::OpenResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncServerStreaming(2, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_s_unlink() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_unlink(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::aafs::StatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -283,7 +327,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodAsync(3);
+      ::grpc::Service::MarkMethodAsync(4);
     }
     ~WithAsyncMethod_s_mkdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -294,7 +338,7 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_mkdir(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::aafs::StatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -303,7 +347,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_s_rmdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -314,7 +358,7 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_rmdir(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::aafs::StatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -323,7 +367,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_s_creat() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_s_creat() override {
       BaseClassMustBeDerivedFromService(this);
@@ -334,10 +378,10 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_creat(::grpc::ServerContext* context, ::aafs::PathRequest* request, ::grpc::ServerAsyncResponseWriter< ::aafs::StatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_s_getattr<WithAsyncMethod_s_readdir<WithAsyncMethod_s_download<WithAsyncMethod_s_mkdir<WithAsyncMethod_s_rmdir<WithAsyncMethod_s_creat<Service > > > > > > AsyncService;
+  typedef WithAsyncMethod_s_getattr<WithAsyncMethod_s_readdir<WithAsyncMethod_s_download<WithAsyncMethod_s_unlink<WithAsyncMethod_s_mkdir<WithAsyncMethod_s_rmdir<WithAsyncMethod_s_creat<Service > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_s_getattr : public BaseClass {
    private:
@@ -399,7 +443,7 @@ class gRPCService final {
    public:
     WithCallbackMethod_s_download() {
       ::grpc::Service::MarkMethodCallback(2,
-          new ::grpc::internal::CallbackServerStreamingHandler< ::aafs::PathRequest, ::aafs::FileContent>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::aafs::PathRequest, ::aafs::OpenResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::aafs::PathRequest* request) { return this->s_download(context, request); }));
     }
@@ -407,12 +451,39 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerWriteReactor< ::aafs::FileContent>* s_download(
+    virtual ::grpc::ServerWriteReactor< ::aafs::OpenResponse>* s_download(
       ::grpc::CallbackServerContext* /*context*/, const ::aafs::PathRequest* /*request*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_s_unlink() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) { return this->s_unlink(context, request, response); }));}
+    void SetMessageAllocatorFor_s_unlink(
+        ::grpc::MessageAllocator< ::aafs::PathRequest, ::aafs::StatusResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* s_unlink(
+      ::grpc::CallbackServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithCallbackMethod_s_mkdir : public BaseClass {
@@ -420,13 +491,13 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodCallback(3,
+      ::grpc::Service::MarkMethodCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) { return this->s_mkdir(context, request, response); }));}
     void SetMessageAllocatorFor_s_mkdir(
         ::grpc::MessageAllocator< ::aafs::PathRequest, ::aafs::StatusResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -447,13 +518,13 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) { return this->s_rmdir(context, request, response); }));}
     void SetMessageAllocatorFor_s_rmdir(
         ::grpc::MessageAllocator< ::aafs::PathRequest, ::aafs::StatusResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -474,13 +545,13 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_s_creat() {
-      ::grpc::Service::MarkMethodCallback(5,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::aafs::PathRequest* request, ::aafs::StatusResponse* response) { return this->s_creat(context, request, response); }));}
     void SetMessageAllocatorFor_s_creat(
         ::grpc::MessageAllocator< ::aafs::PathRequest, ::aafs::StatusResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::aafs::PathRequest, ::aafs::StatusResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -495,7 +566,7 @@ class gRPCService final {
     virtual ::grpc::ServerUnaryReactor* s_creat(
       ::grpc::CallbackServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_s_getattr<WithCallbackMethod_s_readdir<WithCallbackMethod_s_download<WithCallbackMethod_s_mkdir<WithCallbackMethod_s_rmdir<WithCallbackMethod_s_creat<Service > > > > > > CallbackService;
+  typedef WithCallbackMethod_s_getattr<WithCallbackMethod_s_readdir<WithCallbackMethod_s_download<WithCallbackMethod_s_unlink<WithCallbackMethod_s_mkdir<WithCallbackMethod_s_rmdir<WithCallbackMethod_s_creat<Service > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_s_getattr : public BaseClass {
@@ -543,7 +614,24 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_s_unlink() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -554,7 +642,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodGeneric(3);
+      ::grpc::Service::MarkMethodGeneric(4);
     }
     ~WithGenericMethod_s_mkdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -571,7 +659,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_s_rmdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -588,7 +676,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_s_creat() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_s_creat() override {
       BaseClassMustBeDerivedFromService(this);
@@ -651,7 +739,7 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -660,12 +748,32 @@ class gRPCService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_s_unlink() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requests_unlink(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_s_mkdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodRaw(3);
+      ::grpc::Service::MarkMethodRaw(4);
     }
     ~WithRawMethod_s_mkdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -676,7 +784,7 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_mkdir(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -685,7 +793,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_s_rmdir() override {
       BaseClassMustBeDerivedFromService(this);
@@ -696,7 +804,7 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_rmdir(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -705,7 +813,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_s_creat() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_s_creat() override {
       BaseClassMustBeDerivedFromService(this);
@@ -716,7 +824,7 @@ class gRPCService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Requests_creat(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -778,7 +886,7 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -786,12 +894,34 @@ class gRPCService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_s_unlink() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_unlink(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* s_unlink(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_s_mkdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodRawCallback(3,
+      ::grpc::Service::MarkMethodRawCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_mkdir(context, request, response); }));
@@ -813,7 +943,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_rmdir(context, request, response); }));
@@ -835,7 +965,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_s_creat() {
-      ::grpc::Service::MarkMethodRawCallback(5,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->s_creat(context, request, response); }));
@@ -906,12 +1036,39 @@ class gRPCService final {
     virtual ::grpc::Status Streameds_readdir(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::aafs::PathRequest,::aafs::ReadDirResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_s_unlink : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_s_unlink() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::aafs::PathRequest, ::aafs::StatusResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::aafs::PathRequest, ::aafs::StatusResponse>* streamer) {
+                       return this->Streameds_unlink(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_s_unlink() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status s_unlink(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::aafs::StatusResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streameds_unlink(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::aafs::PathRequest,::aafs::StatusResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_s_mkdir : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_s_mkdir() {
-      ::grpc::Service::MarkMethodStreamed(3,
+      ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
           ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](::grpc::ServerContext* context,
@@ -938,7 +1095,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_s_rmdir() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](::grpc::ServerContext* context,
@@ -965,7 +1122,7 @@ class gRPCService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_s_creat() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::aafs::PathRequest, ::aafs::StatusResponse>(
             [this](::grpc::ServerContext* context,
@@ -986,7 +1143,7 @@ class gRPCService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status Streameds_creat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::aafs::PathRequest,::aafs::StatusResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_s_download : public BaseClass {
    private:
@@ -995,10 +1152,10 @@ class gRPCService final {
     WithSplitStreamingMethod_s_download() {
       ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::SplitServerStreamingHandler<
-          ::aafs::PathRequest, ::aafs::FileContent>(
+          ::aafs::PathRequest, ::aafs::OpenResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerSplitStreamer<
-                     ::aafs::PathRequest, ::aafs::FileContent>* streamer) {
+                     ::aafs::PathRequest, ::aafs::OpenResponse>* streamer) {
                        return this->Streameds_download(context,
                          streamer);
                   }));
@@ -1007,15 +1164,15 @@ class gRPCService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::FileContent>* /*writer*/) override {
+    ::grpc::Status s_download(::grpc::ServerContext* /*context*/, const ::aafs::PathRequest* /*request*/, ::grpc::ServerWriter< ::aafs::OpenResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with split streamed
-    virtual ::grpc::Status Streameds_download(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::aafs::PathRequest,::aafs::FileContent>* server_split_streamer) = 0;
+    virtual ::grpc::Status Streameds_download(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::aafs::PathRequest,::aafs::OpenResponse>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_s_download<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithSplitStreamingMethod_s_download<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_s_getattr<WithStreamedUnaryMethod_s_readdir<WithSplitStreamingMethod_s_download<WithStreamedUnaryMethod_s_unlink<WithStreamedUnaryMethod_s_mkdir<WithStreamedUnaryMethod_s_rmdir<WithStreamedUnaryMethod_s_creat<Service > > > > > > > StreamedService;
 };
 
 }  // namespace aafs

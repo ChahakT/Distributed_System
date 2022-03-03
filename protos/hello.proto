@@ -28,15 +28,23 @@ message ReadDirResponse {
   repeated string entries = 2;
 }
 
-message FileContent { bytes data = 1; }
-message StatusResponse { 
-  int32 ret = 1;
+message MATime {
+  int64 atime = 1;
+  int64 mtime = 2;
 }
+
+message OpenResponse {
+  oneof test_oneof {
+    MATime time = 1;
+    bytes data = 2;
+  }
+}
+message StatusResponse { int32 ret = 1; }
 
 service gRPCService {
   rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
   rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
-  rpc s_download(PathRequest) returns (stream FileContent) {}
+  rpc s_download(PathRequest) returns (stream OpenResponse) {}
   rpc s_unlink(PathRequest) returns (StatusResponse) {}
   rpc s_mkdir(PathRequest) returns (StatusResponse) {}
   rpc s_rmdir(PathRequest) returns (StatusResponse) {}
