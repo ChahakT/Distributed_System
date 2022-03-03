@@ -113,6 +113,10 @@ class gRPCServiceImpl final : public gRPCService::Service {
     Status s_mkdir(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {
         int ret = mkdir(to_server_path(req->path()).c_str(), 0777);
+        if (ret == -1) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
         reply->set_ret(ret);
         return Status::OK;
     }
@@ -120,6 +124,10 @@ class gRPCServiceImpl final : public gRPCService::Service {
     Status s_rmdir(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {
         int ret = rmdir(to_server_path(req->path()).c_str());
+        if (ret == -1) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
         reply->set_ret(ret);
         return Status::OK;
     }
