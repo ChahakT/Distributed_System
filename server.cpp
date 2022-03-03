@@ -80,6 +80,35 @@ class gRPCServiceImpl final : public gRPCService::Service {
         }
         return Status::OK;
     }
+
+    Status s_unlink(ServerContext *context, const aafs::PathRequest *req,
+                    aafs::StatusResponse *reply) override{
+                        
+        int ret = unlink(to_server_path(req->path()).c_str());
+        reply->set_ret(ret);
+        return Status::OK;
+    }
+
+    Status s_creat(ServerContext *context, const aafs::PathRequest *req,
+                    aafs::StatusResponse *reply) override{
+        int ret = creat(to_server_path(req->path()).c_str(), 0777);
+        reply->set_ret(ret);
+        return Status::OK;
+    }
+
+    Status s_mkdir(ServerContext *context, const aafs::PathRequest *req,
+                     aafs::StatusResponse *reply) override {
+	    int ret = mkdir(to_server_path(req->path()).c_str(), 0777);
+        reply->set_ret(ret);    
+	    return Status::OK;
+    }
+
+    Status s_rmdir(ServerContext *context, const aafs::PathRequest *req,
+                     aafs::StatusResponse *reply) override {
+        int ret = rmdir(to_server_path(req->path()).c_str());
+        reply->set_ret(ret);
+        return Status::OK;
+    }
 };
 
 int main() {

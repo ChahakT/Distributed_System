@@ -29,9 +29,16 @@ message ReadDirResponse {
 }
 
 message FileContent { bytes data = 1; }
+message StatusResponse { 
+  int32 ret = 1;
+}
 
 service gRPCService {
   rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
   rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
   rpc s_download(PathRequest) returns (stream FileContent) {}
+  rpc s_unlink(PathRequest) returns (StatusResponse) {}
+  rpc s_mkdir(PathRequest) returns (StatusResponse) {}
+  rpc s_rmdir(PathRequest) returns (StatusResponse) {}
+  rpc s_creat(PathRequest) returns (StatusResponse) {}
 }
