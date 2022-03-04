@@ -27,7 +27,6 @@ make -j
     }
     ```
 3. Define new protobuf in `protos/hello.proto` if needed
-    - Compile protobuf by running `./gen_proto.sh`
     ```protobuf
     message PathRequest { string path = 1; }
     message GetAttrResponse {
