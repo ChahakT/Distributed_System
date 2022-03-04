@@ -15,15 +15,20 @@ set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(gRPC)
 
 
-find_package(FUSE REQUIRED)
-include_directories(${FUSE_INCLUDE_DIR})
-add_definitions("-D_FILE_OFFSET_BITS=64")
+add_custom_command(
+        OUTPUT includes/hello.pb.cc includes/hello.grpc.pb.cc
+        COMMAND ./gen_proto.sh
+        DEPENDS protos/hello.proto protoc
+)
+
 
 add_executable(server server.cpp includes/hello.pb.cc includes/hello.grpc.pb.cc)
 target_link_libraries(server grpc++)
-target_link_libraries(server ${FUSE_LIBRARIES})
 
 
+find_package(FUSE REQUIRED)
+include_directories(${FUSE_INCLUDE_DIR})
+add_definitions("-D_FILE_OFFSET_BITS=64")
 find_package(OpenSSL REQUIRED)
 add_executable(client client.cpp client_grpc.cpp includes/hello.pb.cc includes/hello.grpc.pb.cc)
 target_link_libraries(client grpc++)
