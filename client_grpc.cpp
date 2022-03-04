@@ -27,8 +27,8 @@ using grpc::Status;
     }
 #define GET_PDATA static_cast<PrivateData *>(fuse_get_context()->private_data)
 
-#define CLIENT_CACHE_FOLDER "./aafs_client_cache/"
-#define CLIENT_TRANSFER_TEMPLATE "./aafs_transferXXXXXX"
+constexpr char kClientCacheFolder[] = "./aafs_client_cache/";
+constexpr char kClientTransferTemplate[] = "./aafs_transferXXXXXX";
 
 class GRPCClient {
    private:
@@ -45,19 +45,21 @@ class GRPCClient {
     }
 
     static std::string to_cache_path(const std::string &path) {
-        return (CLIENT_CACHE_FOLDER + hash_str(path.c_str()));
+        return (kClientCacheFolder + hash_str(path.c_str()));
     }
 
     static std::pair<int, std::string> get_tmp_file() {
-        char tmpla[] = CLIENT_TRANSFER_TEMPLATE;
-        int ret = mkstemp(tmpla);
-        return std::make_pair(ret, tmpla);
+        char transfer_template[sizeof(kClientTransferTemplate)];
+        memcpy(transfer_template, kClientTransferTemplate,
+               sizeof(transfer_template));
+        int ret = mkstemp(transfer_template);
+        return std::make_pair(ret, transfer_template);
     }
 
    public:
     explicit GRPCClient(const std::shared_ptr<Channel> &channel)
         : stub_(gRPCService::NewStub(channel)) {
-        int ret = mkdir(CLIENT_CACHE_FOLDER, 0755);
+        int ret = mkdir(kClientCacheFolder, 0755);
         if (ret != 0 && errno != EEXIST) {
             assert_perror(errno);
         }
@@ -273,18 +275,34 @@ class GRPCClient {
         return reply.ret();
     }
 
-    int c_rename(const char* oldpath, const char* newpath) {
+    int c_rename(const char *oldpath, const char *newpath) {
         printf("[rename] %s %s\n", oldpath, newpath);
+
+        const std::string cached_oldpath = to_cache_path(oldpath);
+        const std::string cached_newpath = to_cache_path(newpath);
+        const std::string tmp_path = cached_oldpath + ".tmp";
+
+        int ret = rename(cached_oldpath.c_str(), tmp_path.c_str());
+        if (ret < 0) return ret;
+
         aafs::RenameRequest request;
         request.set_oldpath(oldpath);
         request.set_newpath(newpath);
         aafs::StatusResponse reply;
         ClientContext context;
         Status status = stub_->s_rename(&context, request, &reply);
+
         if (!status.ok()) {
+            unlink(tmp_path.c_str());
             return -ENONET;
+        } else {
+            if (reply.ret() == 0) {
+                rename(tmp_path.c_str(), cached_newpath.c_str());
+            } else {
+                unlink(tmp_path.c_str());
+            }
+            return reply.ret();
         }
-        return reply.ret();
     }
 
    private:

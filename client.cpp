@@ -62,8 +62,7 @@ static int do_unlink(const char* path) {
     return GET_PDATA->client.c_unlink(path);
 }
 
-static int do_rename(
-    const char* oldpath, const char* newpath) {
+static int do_rename(const char* oldpath, const char* newpath) {
     return GET_PDATA->client.c_rename(oldpath, newpath);
 }
 

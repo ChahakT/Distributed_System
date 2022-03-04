@@ -17,22 +17,19 @@ message Stat {
 }
 
 message PathRequest { string path = 1; }
+message RenameRequest {
+  string oldpath = 1;
+  string newpath = 2;
+}
 
 message GetAttrResponse {
   int32 ret = 1;
   Stat stat = 2;
 }
-
 message ReadDirResponse {
   int32 ret = 1;
   repeated string entries = 2;
 }
-
-message MATime {
-  int64 atime = 1;
-  int64 mtime = 2;
-}
-
 message OpenResponse {
   oneof test_oneof {
     MATime time = 1;
@@ -40,10 +37,14 @@ message OpenResponse {
   }
 }
 message StatusResponse { int32 ret = 1; }
+message StatusMatimeResponse {
+  uint32 ret = 1;
+  MATime matime = 2;
+}
 
-message RenameRequest {
-  string oldpath = 1;
-  string newpath = 2;
+message MATime {
+  int64 atime = 1;
+  int64 mtime = 2;
 }
 
 service gRPCService {
