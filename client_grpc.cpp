@@ -301,13 +301,13 @@ class GRPCClient {
         aafs::StatusResponse reply;
         ClientContext context;
 
-        // Status status = stub_->s_unlink(&context, request, &reply);
-        Status status = stub_->s_mkdir(&context, request, &reply);
+        Status status = stub_->s_unlink(&context, request, &reply);
         if (!status.ok()) {
             return -ENONET;
         }
 
-        // to do, what to do for the file in cache.
+        unlink(to_cache_path(path).c_str());
+
         return reply.ret();
     }
 

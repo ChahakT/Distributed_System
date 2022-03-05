@@ -120,14 +120,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
         return Status::OK;
     }
 
-    // Status s_unlink(ServerContext *context, const aafs::PathRequest *req,
-    //                 aafs::StatusResponse *reply) override{
-
-    //     int ret = unlink(to_server_path(req->path()).c_str());
-    //     //int ret =0;
-    //     reply->set_ret(ret);
-    //     return Status::OK;
-    // }
+    Status s_unlink(ServerContext *context, const aafs::PathRequest *req,
+                    aafs::StatusResponse *reply) override {
+        int ret = unlink(to_server_path(req->path()).c_str());
+        reply->set_ret(ret);
+        return Status::OK;
+    }
 
     Status s_creat(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {

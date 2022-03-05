@@ -135,4 +135,5 @@ gens/
 client
 server
 aafs_client_cache/
+aafs_client_temp/
 includes/**.pb.**
