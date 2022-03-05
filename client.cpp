@@ -57,6 +57,10 @@ static int do_flush(const char* path, struct fuse_file_info* fi) {
     return GET_PDATA->client.c_flush(path, fi);
 }
 
+static int do_fsync(const char* path, int datasync, struct fuse_file_info* fi) {
+    return GET_PDATA->client.c_fsync(path, datasync, fi);
+}
+
 static int do_unlink(const char* path) {
     return GET_PDATA->client.c_unlink(path);
 }
@@ -88,6 +92,7 @@ int main(int argc, char* argv[]) {
     operations.flush = do_flush;
     operations.unlink = do_unlink;
     operations.rename = do_rename;
+    operations.fsync = do_fsync;
 
     return fuse_main(argc, argv, &operations, &private_data);
 }

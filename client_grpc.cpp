@@ -300,6 +300,10 @@ class GRPCClient {
         return 0;
     }
 
+    int c_fsync(const char* path, int, struct fuse_file_info* fi) {
+        return c_flush(path, fi);
+    }
+
     int c_unlink(const char* path) {
         printf("[unlink] %s\n", path);
 
