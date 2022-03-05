@@ -10,6 +10,7 @@
 #include <cstring>
 #include <iomanip>
 #include <memory>
+#include <set>
 #include <string>
 
 #include "includes/hello.grpc.pb.h"
@@ -18,6 +19,7 @@
 using aafs::gRPCService;
 using grpc::Channel;
 using grpc::ClientContext;
+using grpc::ClientWriter;
 using grpc::Status;
 
 #define RET_ERR(stmt)                                                       \
@@ -25,16 +27,16 @@ using grpc::Status;
         fprintf(stderr, "Error: line %d, %s\n", __LINE__, strerror(errno)); \
         return -errno;                                                      \
     }
-#define GET_PDATA static_cast<PrivateData *>(fuse_get_context()->private_data)
+#define GET_PDATA static_cast<PrivateData*>(fuse_get_context()->private_data)
 
 constexpr char kClientCacheFolder[] = "./aafs_client_cache/";
 constexpr char kClientTransferTemplate[] = "./aafs_transferXXXXXX";
 
 class GRPCClient {
    private:
-    static std::string hash_str(const char *src) {
+    static std::string hash_str(const char* src) {
         auto digest = std::make_unique<unsigned char[]>(SHA256_DIGEST_LENGTH);
-        SHA256(reinterpret_cast<const unsigned char *>(src), strlen(src),
+        SHA256(reinterpret_cast<const unsigned char*>(src), strlen(src),
                digest.get());
         std::stringstream ss;
         for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
@@ -44,7 +46,7 @@ class GRPCClient {
         return ss.str();
     }
 
-    static std::string to_cache_path(const std::string &path) {
+    static std::string to_cache_path(const std::string& path) {
         return (kClientCacheFolder + hash_str(path.c_str()));
     }
 
@@ -56,8 +58,13 @@ class GRPCClient {
         return std::make_pair(ret, transfer_template);
     }
 
+    static std::string to_write_cache_path(const char* path, int fd) {
+        return kClientCacheFolder + hash_str(path) + std::to_string(fd) +
+               ".dirty";
+    }
+
    public:
-    explicit GRPCClient(const std::shared_ptr<Channel> &channel)
+    explicit GRPCClient(const std::shared_ptr<Channel>& channel)
         : stub_(gRPCService::NewStub(channel)) {
         int ret = mkdir(kClientCacheFolder, 0755);
         if (ret != 0 && errno != EEXIST) {
@@ -65,7 +72,7 @@ class GRPCClient {
         }
     }
 
-    int c_getattr(const char *path, struct stat *st) {
+    int c_getattr(const char* path, struct stat* st) {
         // printf("[getattr] %s\n", path);
         aafs::PathRequest request;
         request.set_path(path);
@@ -92,8 +99,8 @@ class GRPCClient {
         return 0;
     }
 
-    int c_readdir(const char *path, void *buffer, fuse_fill_dir_t filler,
-                  off_t offset, struct fuse_file_info *fi) {
+    int c_readdir(const char* path, void* buffer, fuse_fill_dir_t filler,
+                  off_t offset, struct fuse_file_info* fi) {
         printf("[readdir] %s\n", path);
         aafs::PathRequest request;
         request.set_path(path);
@@ -106,13 +113,13 @@ class GRPCClient {
         if (reply.ret() < 0) {
             return reply.ret();
         }
-        for (auto &s : reply.entries()) {
+        for (auto& s : reply.entries()) {
             filler(buffer, s.c_str(), nullptr, 0);
         }
         return 0;
     }
 
-    int c_open(const char *path, struct fuse_file_info *fi) {
+    int c_open(const char* path, struct fuse_file_info* fi) {
         printf("[open] %s\n", path);
         struct stat client_st {};
         auto cache_path = to_cache_path(path);
@@ -147,9 +154,9 @@ class GRPCClient {
         aafs::PathRequest request;
         request.set_path(path);
         printf("[download] %s\n", path);
-        std::unique_ptr<grpc::ClientReader<aafs::OpenResponse>> reader(
+        std::unique_ptr<grpc::ClientReader<aafs::DownloadResponse>> reader(
             stub_->s_download(&context, request));
-        aafs::OpenResponse content;
+        aafs::DownloadResponse content;
         int atime, mtime;
         reader->Read(&content);
         if (content.has_time()) {
@@ -187,7 +194,7 @@ class GRPCClient {
         return 0;
     }
 
-    int c_creat(const char *path, mode_t mode, struct fuse_file_info *fi) {
+    int c_creat(const char* path, mode_t mode, struct fuse_file_info* fi) {
         printf("[creat] %s\n", path);
         auto cache_path = to_cache_path(path);
         aafs::PathRequest request;
@@ -207,28 +214,73 @@ class GRPCClient {
         return 0;
     }
 
-    int c_write(const char *path, const char *buffer, size_t size, off_t offset,
-                struct fuse_file_info *fi) {
-        auto cache_path = to_cache_path(path);
-        auto [tmp_fd, tmp_name] = get_tmp_file();
-        auto fd1 = fi->fh;
-        char buf[4096];
-        memset(buf, 0, sizeof(buf));
-        ssize_t n;
-        while ((n = read(fd1, buf, sizeof(buf))) > 0) {
-            write(tmp_fd, buf, n);
+    int c_write(const char* path, const char* buffer, size_t size, off_t offset,
+                struct fuse_file_info* fi) {
+        printf("[write] %s\n", path);
+        auto write_path = to_write_cache_path(path, fi->fh);
+        // copy-on-write
+        if (access(write_path.c_str(), F_OK) != 0) {
+            printf("[write] copy-on-write!\n");
+            int fd1 = fi->fh;
+            int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
+            char buf[4096];
+            memset(buf, 0, sizeof(buf));
+            ssize_t n;
+            while ((n = read(fd1, buf, sizeof(buf))) > 0) {
+                write(fd2, buf, n);
+            }
+            dup2(fd2, fd1);
+            dirty_fds.insert(fd1);
+            printf("fd: %d\n", fd1);
         }
+        int fd = fi->fh;
         size_t ret;
-        RET_ERR(ret = pwrite(tmp_fd, buffer, size, offset));
-        RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
+        RET_ERR(ret = pwrite(fd, buffer, size, offset));
         return ret;
     }
 
-    //    int c_flush(const char* path) {
-    //        printf("[flush] %s\n", path);
-    //    }
-    //
-    int c_unlink(const char *path) {
+    int c_flush(const char* path, struct fuse_file_info* fi) {
+        printf("[flush] %s\n", path);
+
+        if (dirty_fds.count(fi->fh) == 0) {
+            return 0;
+        }
+
+        aafs::UploadRequest req;
+        aafs::StatusResponse reply;
+        ClientContext context;
+
+        std::unique_ptr<ClientWriter<aafs::UploadRequest>> writer(
+            stub_->s_upload(&context, &reply));
+
+        req.set_path(path);
+        if (!writer->Write(req)) {
+            return -ENONET;
+        }
+
+        constexpr int buf_size = 4096;
+        auto buf = std::make_unique<std::string>(buf_size, '\0');
+        ssize_t n;
+        while ((n = read(fi->fh, buf->data(), buf_size)) > 0) {
+            buf->resize(n);
+            req.set_allocated_data(buf.release());
+            if (!writer->Write(req)) {
+                return -ENONET;
+            }
+
+            buf = std::make_unique<std::string>(buf_size, '\0');
+        }
+
+        writer->WritesDone();
+        Status status = writer->Finish();
+        if (!status.ok()) {
+            return -ENONET;
+        }
+
+        return 0;
+    }
+
+    int c_unlink(const char* path) {
         printf("[unlink] %s\n", path);
 
         aafs::PathRequest request;
@@ -247,7 +299,7 @@ class GRPCClient {
         return reply.ret();
     }
 
-    int c_mkdir(const char *path, mode_t mode) {
+    int c_mkdir(const char* path, mode_t mode) {
         printf("[mkdir] %s\n", path);
         aafs::PathRequest request;
         request.set_path(path);
@@ -261,7 +313,7 @@ class GRPCClient {
         return reply.ret();
     }
 
-    int c_rmdir(const char *path) {
+    int c_rmdir(const char* path) {
         printf("[rmdir] %s\n", path);
         aafs::PathRequest request;
         request.set_path(path);
@@ -275,7 +327,7 @@ class GRPCClient {
         return reply.ret();
     }
 
-    int c_rename(const char *oldpath, const char *newpath) {
+    int c_rename(const char* oldpath, const char* newpath) {
         printf("[rename] %s %s\n", oldpath, newpath);
 
         const std::string cached_oldpath = to_cache_path(oldpath);
@@ -307,4 +359,6 @@ class GRPCClient {
 
    private:
     std::unique_ptr<gRPCService::Stub> stub_;
+
+    std::unordered_set<int> dirty_fds;
 };

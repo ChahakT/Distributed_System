@@ -21,6 +21,13 @@ message RenameRequest {
   string oldpath = 1;
   string newpath = 2;
 }
+message UploadRequest {
+  oneof test_oneof {
+    string path = 1;
+    MATime time = 2;
+    bytes data = 3;
+  }
+}
 
 message GetAttrResponse {
   int32 ret = 1;
@@ -30,7 +37,7 @@ message ReadDirResponse {
   int32 ret = 1;
   repeated string entries = 2;
 }
-message OpenResponse {
+message DownloadResponse {
   oneof test_oneof {
     MATime time = 1;
     bytes data = 2;
@@ -50,10 +57,11 @@ message MATime {
 service gRPCService {
   rpc s_getattr(PathRequest) returns (GetAttrResponse) {}
   rpc s_readdir(PathRequest) returns (ReadDirResponse) {}
-  rpc s_download(PathRequest) returns (stream OpenResponse) {}
+  rpc s_download(PathRequest) returns (stream DownloadResponse) {}
   rpc s_unlink(PathRequest) returns (StatusResponse) {}
   rpc s_mkdir(PathRequest) returns (StatusResponse) {}
   rpc s_rmdir(PathRequest) returns (StatusResponse) {}
   rpc s_creat(PathRequest) returns (StatusResponse) {}
   rpc s_rename(RenameRequest) returns (StatusResponse) {}
+  rpc s_upload(stream UploadRequest) returns (StatusResponse) {}
 }

@@ -66,14 +66,14 @@ class gRPCServiceImpl final : public gRPCService::Service {
     }
 
     Status s_download(ServerContext *context, const aafs::PathRequest *req,
-                      ServerWriter<aafs::OpenResponse> *writer) override {
+                      ServerWriter<aafs::DownloadResponse> *writer) override {
         int fd = open(to_server_path(req->path()).c_str(), O_RDONLY);
         if (fd == -1) {
             return Status::CANCELLED;
         }
         struct stat st {};
         fstat(fd, &st);
-        aafs::OpenResponse reply;
+        aafs::DownloadResponse reply;
 
         auto matime = std::make_unique<aafs::MATime>();
         matime->set_atime(st.st_atime);
@@ -87,6 +87,36 @@ class gRPCServiceImpl final : public gRPCService::Service {
             reply.set_data(buf, n);
             writer->Write(reply);
         }
+        return Status::OK;
+    }
+
+    Status s_upload(ServerContext *context,
+                    ServerReader<aafs::UploadRequest> *reader,
+                    aafs::StatusResponse *reply) override {
+        aafs::UploadRequest req;
+
+        if (!reader->Read(&req)) return Status::CANCELLED;
+        if (!req.has_path()) return Status::CANCELLED;
+        std::string path = req.path();
+
+        int fd = open(to_server_path(path).c_str(), O_WRONLY);
+        if (fd < 0) {
+            reply->set_ret(-errno);
+            return Status::OK;
+        }
+
+        while (reader->Read(&req)) {
+            if (!req.has_data()) return Status::CANCELLED;
+            int ret = write(fd, req.data().c_str(), req.data().size());
+            if (ret < 0) {
+                reply->set_ret(-errno);
+                return Status::OK;
+            }
+        }
+
+        close(fd);
+
+        reply->set_ret(0);
         return Status::OK;
     }
 

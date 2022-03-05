@@ -53,10 +53,9 @@ static int do_rmdir(const char* path) {
     return GET_PDATA->client.c_rmdir(path);
 }
 
-// static int do_flush(const char * path, struct fuse_file_info *fi) {
-//     return GET_PDATA->client.c_flush(path);
-// }
-//
+static int do_flush(const char* path, struct fuse_file_info* fi) {
+    return GET_PDATA->client.c_flush(path, fi);
+}
 
 static int do_unlink(const char* path) {
     return GET_PDATA->client.c_unlink(path);
@@ -86,7 +85,7 @@ int main(int argc, char* argv[]) {
     operations.rmdir = do_rmdir;
     operations.write = do_write;
     operations.create = do_creat;
-    //    operations.flush = do_flush;
+    operations.flush = do_flush;
     operations.unlink = do_unlink;
     operations.rename = do_rename;
 
