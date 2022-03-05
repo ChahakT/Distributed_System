@@ -295,8 +295,10 @@ class GRPCClient {
         if (!status.ok()) {
             return -ENONET;
         }
-        rename(to_write_cache_path(path, fi->fh).c_str(),
-               to_cache_path(path).c_str());
+        if (rename(to_write_cache_path(path, fi->fh).c_str(),
+                   to_cache_path(path).c_str()) == 0) {
+            dirty_fds.erase(fi->fh);
+        }
         return 0;
     }
 
