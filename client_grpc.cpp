@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <iomanip>
 #include <memory>
 #include <set>
@@ -30,6 +31,7 @@ using grpc::Status;
 #define GET_PDATA static_cast<PrivateData*>(fuse_get_context()->private_data)
 
 constexpr char kClientCacheFolder[] = "./aafs_client_cache/";
+constexpr char kClientTempFolder[] = "./aafs_client_temp/";
 constexpr char kClientTransferTemplate[] = "./aafs_transferXXXXXX";
 
 class GRPCClient {
@@ -59,7 +61,7 @@ class GRPCClient {
     }
 
     static std::string to_write_cache_path(const char* path, int fd) {
-        return kClientCacheFolder + hash_str(path) + std::to_string(fd) +
+        return kClientTempFolder + hash_str(path) + std::to_string(fd) +
                ".dirty";
     }
 
@@ -69,6 +71,16 @@ class GRPCClient {
         int ret = mkdir(kClientCacheFolder, 0755);
         if (ret != 0 && errno != EEXIST) {
             assert_perror(errno);
+        }
+        ret = mkdir(kClientTempFolder, 0755);
+        if (ret != 0) {
+            if (errno == EEXIST) {  // delete all dirty files
+                for (const auto& entry :
+                     std::filesystem::directory_iterator(kClientTempFolder))
+                    std::filesystem::remove_all(entry.path());
+            } else {
+                assert_perror(errno);
+            }
         }
     }
 
