@@ -227,6 +227,7 @@ class GRPCClient {
                 write(fd2, buf, n);
             }
             dup2(fd2, fd1);
+            close(fd2);
             dirty_fds.insert(fd1);
         }
         int fd = fi->fh;
