@@ -123,10 +123,14 @@ class gRPCServiceImpl final : public gRPCService::Service {
         }
 
         while (reader->Read(&req)) {
-            if (!req.has_data()) return Status::CANCELLED;
+            if (!req.has_data()) {
+                close(tmp_fd);
+                return Status::CANCELLED;
+            }
             int ret = write(tmp_fd, req.data().c_str(), req.data().size());
             if (ret < 0) {
                 reply->set_ret(-errno);
+                close(tmp_fd);
                 return Status::OK;
             }
         }
