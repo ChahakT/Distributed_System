@@ -1,7 +1,9 @@
 #include <fcntl.h>
 #include <fuse.h>
 #include <grpcpp/grpcpp.h>
+#include <linux/fs.h>
 #include <openssl/sha.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utime.h>
@@ -220,12 +222,13 @@ class GRPCClient {
             printf("[write] copy-on-write!\n");
             int fd1 = fi->fh;
             int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
-            char buf[4096];
-            memset(buf, 0, sizeof(buf));
-            ssize_t n;
-            while ((n = read(fd1, buf, sizeof(buf))) > 0) {
-                write(fd2, buf, n);
+
+            // Ref:
+            // https://stackoverflow.com/questions/52766388/how-can-i-use-the-copy-on-write-of-a-btrfs-from-c-code
+            if (ioctl(fd1, FICLONE, fd2) < 0) {
+                perror("ioctl");
             }
+
             dup2(fd2, fd1);
             dirty_fds.insert(fd1);
         }
