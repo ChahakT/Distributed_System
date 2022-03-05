@@ -17,11 +17,20 @@ using grpc::ServerWriter;
 using grpc::Status;
 
 #define SERVER_FOLDER "./server_folder/"
+constexpr char kServerTransferTemplate[] = "./aafs_transfer_serverXXXXXX";
 
 class gRPCServiceImpl final : public gRPCService::Service {
    private:
     static std::string to_server_path(const std::string &path) {
         return (SERVER_FOLDER + path);
+    }
+
+    static std::pair<int, std::string> get_tmp_file() {
+        char transfer_template[sizeof(kServerTransferTemplate)];
+        memcpy(transfer_template, kServerTransferTemplate,
+               sizeof(transfer_template));
+        int ret = mkostemp(transfer_template, 0777);
+        return std::make_pair(ret, transfer_template);
     }
 
     Status s_getattr(ServerContext *context, const aafs::PathRequest *req,
@@ -107,27 +116,28 @@ class gRPCServiceImpl final : public gRPCService::Service {
         int atime = req.meta().atime();
         int mtime = req.meta().mtime();
 
-        int fd = open(to_server_path(path).c_str(), O_WRONLY);
-        if (fd < 0) {
+        auto [tmp_fd, tmp_name] = get_tmp_file();
+        if (tmp_fd < 0) {
             reply->set_ret(-errno);
             return Status::OK;
         }
 
         while (reader->Read(&req)) {
             if (!req.has_data()) return Status::CANCELLED;
-            int ret = write(fd, req.data().c_str(), req.data().size());
+            int ret = write(tmp_fd, req.data().c_str(), req.data().size());
             if (ret < 0) {
                 reply->set_ret(-errno);
                 return Status::OK;
             }
         }
 
-        fsync(fd);
-        close(fd);
+        fsync(tmp_fd);
+        close(tmp_fd);
         struct utimbuf times {};
         times.actime = atime;
         times.modtime = mtime;
-        utime(to_server_path(path).c_str(), &times);
+        utime(tmp_name.c_str(), &times);
+        rename(tmp_name.c_str(), to_server_path(path).c_str());
 
         reply->set_ret(0);
         return Status::OK;
@@ -142,12 +152,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
 
     Status s_creat(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {
-        int ret = creat(to_server_path(req->path()).c_str(), 0777);
-        if (ret == -1) {
+        int fd = creat(to_server_path(req->path()).c_str(), 0777);
+        if (fd == -1) {
             reply->set_ret(-errno);
             return Status::OK;
         }
-        reply->set_ret(ret);
+        close(fd);
         return Status::OK;
     }
 
