@@ -32,7 +32,8 @@ using grpc::Status;
 
 constexpr char kClientCacheFolder[] = "./aafs_client_cache/";
 constexpr char kClientTempFolder[] = "./aafs_client_temp/";
-constexpr char kClientTransferTemplate[] = "./aafs_transferXXXXXX";
+constexpr char kClientTransferTemplate[] =
+    "./aafs_client_temp/aafs_transferXXXXXX";
 
 class GRPCClient {
    private:

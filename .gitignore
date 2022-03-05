@@ -136,4 +136,5 @@ client
 server
 aafs_client_cache/
 aafs_client_temp/
+aafs_server_temp/
 includes/**.pb.**

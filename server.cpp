@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <utime.h>
 
+#include <filesystem>
+
 #include "includes/hello.grpc.pb.h"
 
 using aafs::gRPCService;
@@ -17,7 +19,9 @@ using grpc::ServerWriter;
 using grpc::Status;
 
 #define SERVER_FOLDER "./server_folder/"
-constexpr char kServerTransferTemplate[] = "./aafs_transfer_serverXXXXXX";
+constexpr char kServerTempFolder[] = "./aafs_server_temp/";
+constexpr char kServerTransferTemplate[] =
+    "./aafs_server_temp/aafs_serverXXXXXX";
 
 class gRPCServiceImpl final : public gRPCService::Service {
    private:
@@ -197,6 +201,16 @@ class gRPCServiceImpl final : public gRPCService::Service {
 };
 
 int main() {
+    int ret = mkdir(kServerTempFolder, 0755);
+    if (ret != 0) {
+        if (errno == EEXIST) {  // delete all dirty files
+            for (const auto &entry :
+                 std::filesystem::directory_iterator(kServerTempFolder))
+                std::filesystem::remove_all(entry.path());
+        } else {
+            assert_perror(errno);
+        }
+    }
     std::string server_address("localhost:50051");
     gRPCServiceImpl service;
     ServerBuilder builder;
