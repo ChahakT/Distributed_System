@@ -21,11 +21,15 @@ message RenameRequest {
   string oldpath = 1;
   string newpath = 2;
 }
+message UploadMeta {
+  string path = 1;
+  int64 atime = 2;
+  int64 mtime = 3;
+}
 message UploadRequest {
   oneof test_oneof {
-    string path = 1;
-    MATime time = 2;
-    bytes data = 3;
+    UploadMeta meta = 1;
+    bytes data = 2;
   }
 }
 

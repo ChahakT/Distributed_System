@@ -3,6 +3,7 @@
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
 #include <sys/stat.h>
+#include <utime.h>
 
 #include "includes/hello.grpc.pb.h"
 
@@ -81,11 +82,14 @@ class gRPCServiceImpl final : public gRPCService::Service {
         reply.set_allocated_time(matime.release());
         writer->Write(reply);
 
+        constexpr int buf_size = 4096;
+        auto buf = std::make_unique<std::string>(buf_size, '\0');
         ssize_t n;
-        char buf[4096];
-        while ((n = read(fd, buf, sizeof(buf))) > 0) {
-            reply.set_data(buf, n);
+        while ((n = read(fd, buf->data(), sizeof(buf))) > 0) {
+            buf->resize(n);
+            reply.set_allocated_data(buf.release());
             writer->Write(reply);
+            buf = std::make_unique<std::string>(buf_size, '\0');
         }
         return Status::OK;
     }
@@ -96,8 +100,10 @@ class gRPCServiceImpl final : public gRPCService::Service {
         aafs::UploadRequest req;
 
         if (!reader->Read(&req)) return Status::CANCELLED;
-        if (!req.has_path()) return Status::CANCELLED;
-        std::string path = req.path();
+        if (!req.has_meta()) return Status::CANCELLED;
+        std::string path = req.meta().path();
+        int atime = req.meta().atime();
+        int mtime = req.meta().mtime();
 
         int fd = open(to_server_path(path).c_str(), O_WRONLY);
         if (fd < 0) {
@@ -114,7 +120,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
             }
         }
 
+        fsync(fd);
         close(fd);
+        struct utimbuf times {};
+        times.actime = atime;
+        times.modtime = mtime;
+        utime(to_server_path(path).c_str(), &times);
 
         reply->set_ret(0);
         return Status::OK;

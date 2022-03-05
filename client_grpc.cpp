@@ -243,7 +243,6 @@ class GRPCClient {
             }
             dup2(fd2, fd1);
             dirty_fds.insert(fd1);
-            printf("fd: %d\n", fd1);
         }
         int fd = fi->fh;
         size_t ret;
@@ -259,13 +258,21 @@ class GRPCClient {
         }
 
         aafs::UploadRequest req;
+        auto meta = std::make_unique<aafs::UploadMeta>();
         aafs::StatusResponse reply;
         ClientContext context;
 
         std::unique_ptr<ClientWriter<aafs::UploadRequest>> writer(
             stub_->s_upload(&context, &reply));
 
-        req.set_path(path);
+        fsync(fi->fh);
+        struct stat st;
+        fstat(fi->fh, &st);
+
+        meta->set_path(path);
+        meta->set_atime(st.st_atime);
+        meta->set_mtime(st.st_mtime);
+        req.set_allocated_meta(meta.release());
         if (!writer->Write(req)) {
             return -ENONET;
         }
@@ -288,7 +295,8 @@ class GRPCClient {
         if (!status.ok()) {
             return -ENONET;
         }
-
+        rename(to_write_cache_path(path, fi->fh).c_str(),
+               to_cache_path(path).c_str());
         return 0;
     }
 
