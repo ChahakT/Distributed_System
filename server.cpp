@@ -33,7 +33,8 @@ class gRPCServiceImpl final : public gRPCService::Service {
         char transfer_template[sizeof(kServerTransferTemplate)];
         memcpy(transfer_template, kServerTransferTemplate,
                sizeof(transfer_template));
-        int ret = mkostemp(transfer_template, 0777);
+        int ret = mkstemp(transfer_template);
+        chmod(transfer_template, 0777);
         return std::make_pair(ret, transfer_template);
     }
 
