@@ -17,7 +17,7 @@ make -j
 2. Insert stub function in `client.cpp`
     ```c
     static int do_getattr(const char* path, struct stat* st) {
-        return GET_PDATA->client.c_getattr(path, st);
+        return client->c_getattr(path, st);
     }
 
     int main() {

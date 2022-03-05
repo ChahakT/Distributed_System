@@ -10,23 +10,23 @@
 
 class PrivateData {
    public:
-    GRPCClient client;
-    explicit PrivateData(const std::shared_ptr<Channel>& channel,
-                         const std::string cache_path)
-        : client(channel, cache_path) {}
+    std::string target_str;
+    std::string cache_path;
 };
 
+static std::unique_ptr<GRPCClient> client;
+
 static int do_getattr(const char* path, struct stat* st) {
-    return GET_PDATA->client.c_getattr(path, st);
+    return client->c_getattr(path, st);
 }
 
 static int do_readdir(const char* path, void* buffer, fuse_fill_dir_t filler,
                       off_t offset, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_readdir(path, buffer, filler, offset, fi);
+    return client->c_readdir(path, buffer, filler, offset, fi);
 }
 
 static int do_open(const char* path, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_open(path, fi);
+    return client->c_open(path, fi);
 }
 
 static int do_read(const char* path, char* buffer, size_t size, off_t offset,
@@ -39,39 +39,45 @@ static int do_read(const char* path, char* buffer, size_t size, off_t offset,
 
 static int do_write(const char* path, const char* buffer, size_t size,
                     off_t offset, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_write(path, buffer, size, offset, fi);
+    return client->c_write(path, buffer, size, offset, fi);
 }
 
 static int do_creat(const char* path, mode_t mode, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_creat(path, mode, fi);
+    return client->c_creat(path, mode, fi);
 }
 
 static int do_mkdir(const char* path, mode_t mode) {
-    return GET_PDATA->client.c_mkdir(path, mode);
+    return client->c_mkdir(path, mode);
 }
 
-static int do_rmdir(const char* path) {
-    return GET_PDATA->client.c_rmdir(path);
-}
+static int do_rmdir(const char* path) { return client->c_rmdir(path); }
 
 static int do_flush(const char* path, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_flush(path, fi);
+    return client->c_flush(path, fi);
 }
 
 static int do_fsync(const char* path, int datasync, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_fsync(path, datasync, fi);
+    return client->c_fsync(path, datasync, fi);
 }
 
-static int do_unlink(const char* path) {
-    return GET_PDATA->client.c_unlink(path);
-}
+static int do_unlink(const char* path) { return client->c_unlink(path); }
 
 static int do_rename(const char* oldpath, const char* newpath) {
-    return GET_PDATA->client.c_rename(oldpath, newpath);
+    return client->c_rename(oldpath, newpath);
 }
 
 static int do_release(const char* path, struct fuse_file_info* fi) {
-    return GET_PDATA->client.c_release(path, fi);
+    return client->c_release(path, fi);
+}
+
+static void* do_init(struct fuse_conn_info* conn) {
+    grpc::ChannelArguments ch_args;
+    ch_args.SetMaxReceiveMessageSize(INT_MAX);
+    ch_args.SetMaxSendMessageSize(INT_MAX);
+    client = std::make_unique<GRPCClient>(
+        grpc::CreateCustomChannel(GET_PDATA->target_str,
+                                  grpc::InsecureChannelCredentials(), ch_args),
+        GET_PDATA->cache_path);
 }
 
 static struct fuse_operations operations;
@@ -82,17 +88,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    const std::string target_str = argv[1];
-    grpc::ChannelArguments ch_args;
+    PrivateData private_data;
+    private_data.target_str = argv[1];
+    private_data.cache_path = argv[2];
 
-    ch_args.SetMaxReceiveMessageSize(INT_MAX);
-    ch_args.SetMaxSendMessageSize(INT_MAX);
-
-    PrivateData private_data = PrivateData(
-        grpc::CreateCustomChannel(target_str,
-                                  grpc::InsecureChannelCredentials(), ch_args),
-        argv[2]);
-
+    operations.init = do_init;
     operations.getattr = do_getattr;
     operations.readdir = do_readdir;
     operations.open = do_open;
