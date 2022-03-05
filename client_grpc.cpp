@@ -39,7 +39,8 @@ class GRPCClient {
    public:
     explicit GRPCClient(const std::shared_ptr<Channel>& channel,
                         const std::string cache_path)
-        : stub_(gRPCService::NewStub(channel)), kCachePath(std::move(cache_path)) {
+        : stub_(gRPCService::NewStub(channel)),
+          kCachePath(std::move(cache_path)) {
         int ret = mkdir((kCachePath + kClientCacheFolder).c_str(), 0755);
         if (ret != 0 && errno != EEXIST) {
             assert_perror(errno);
@@ -178,7 +179,15 @@ class GRPCClient {
         return 0;
     }
 
-    int c_creat(const char* path, mode_t mode, struct fuse_file_info* fi) {
+    int c_read(const char* path, char* buf, size_t size, off_t offset,
+               struct fuse_file_info* fi) {
+        printf("[read] %s\n", path);
+        ssize_t ret;
+        RET_ERR(ret = pread(fi->fh, buf, size, offset));
+        return ret;
+    }
+
+    int c_create(const char* path, mode_t mode, struct fuse_file_info* fi) {
         printf("[creat] %s\n", path);
         auto cache_path = to_cache_path(path);
         aafs::PathRequest request;

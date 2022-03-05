@@ -8,6 +8,9 @@
 
 #include "client_grpc.cpp"
 
+#define BIND_OPERATION(op) \
+    operations.op = [](auto... args) { return client->c_##op(args...); }
+
 class PrivateData {
    public:
     std::string target_str;
@@ -15,60 +18,6 @@ class PrivateData {
 };
 
 static std::unique_ptr<GRPCClient> client;
-
-static int do_getattr(const char* path, struct stat* st) {
-    return client->c_getattr(path, st);
-}
-
-static int do_readdir(const char* path, void* buffer, fuse_fill_dir_t filler,
-                      off_t offset, struct fuse_file_info* fi) {
-    return client->c_readdir(path, buffer, filler, offset, fi);
-}
-
-static int do_open(const char* path, struct fuse_file_info* fi) {
-    return client->c_open(path, fi);
-}
-
-static int do_read(const char* path, char* buffer, size_t size, off_t offset,
-                   struct fuse_file_info* fi) {
-    printf("[read] %s\n", path);
-    ssize_t ret;
-    RET_ERR(ret = pread(fi->fh, buffer, size, offset));
-    return ret;
-}
-
-static int do_write(const char* path, const char* buffer, size_t size,
-                    off_t offset, struct fuse_file_info* fi) {
-    return client->c_write(path, buffer, size, offset, fi);
-}
-
-static int do_creat(const char* path, mode_t mode, struct fuse_file_info* fi) {
-    return client->c_creat(path, mode, fi);
-}
-
-static int do_mkdir(const char* path, mode_t mode) {
-    return client->c_mkdir(path, mode);
-}
-
-static int do_rmdir(const char* path) { return client->c_rmdir(path); }
-
-static int do_flush(const char* path, struct fuse_file_info* fi) {
-    return client->c_flush(path, fi);
-}
-
-static int do_fsync(const char* path, int datasync, struct fuse_file_info* fi) {
-    return client->c_fsync(path, datasync, fi);
-}
-
-static int do_unlink(const char* path) { return client->c_unlink(path); }
-
-static int do_rename(const char* oldpath, const char* newpath) {
-    return client->c_rename(oldpath, newpath);
-}
-
-static int do_release(const char* path, struct fuse_file_info* fi) {
-    return client->c_release(path, fi);
-}
 
 static void* do_init(struct fuse_conn_info* conn) {
     grpc::ChannelArguments ch_args;
@@ -78,6 +27,7 @@ static void* do_init(struct fuse_conn_info* conn) {
         grpc::CreateCustomChannel(GET_PDATA->target_str,
                                   grpc::InsecureChannelCredentials(), ch_args),
         GET_PDATA->cache_path);
+    return nullptr;
 }
 
 static struct fuse_operations operations;
@@ -93,19 +43,19 @@ int main(int argc, char* argv[]) {
     private_data.cache_path = argv[2];
 
     operations.init = do_init;
-    operations.getattr = do_getattr;
-    operations.readdir = do_readdir;
-    operations.open = do_open;
-    operations.read = do_read;
-    operations.mkdir = do_mkdir;
-    operations.rmdir = do_rmdir;
-    operations.write = do_write;
-    operations.create = do_creat;
-    operations.flush = do_flush;
-    operations.unlink = do_unlink;
-    operations.rename = do_rename;
-    operations.fsync = do_fsync;
-    operations.release = do_release;
+    BIND_OPERATION(getattr);
+    BIND_OPERATION(readdir);
+    BIND_OPERATION(open);
+    BIND_OPERATION(read);
+    BIND_OPERATION(mkdir);
+    BIND_OPERATION(rmdir);
+    BIND_OPERATION(write);
+    BIND_OPERATION(create);
+    BIND_OPERATION(flush);
+    BIND_OPERATION(unlink);
+    BIND_OPERATION(rename);
+    BIND_OPERATION(fsync);
+    BIND_OPERATION(release);
 
     return fuse_main(argc - 2, argv + 2, &operations, &private_data);
 }
