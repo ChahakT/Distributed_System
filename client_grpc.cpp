@@ -383,6 +383,12 @@ class GRPCClient {
         }
     }
 
+    int c_release(const char* path, struct fuse_file_info* fi) {
+        printf("[release] %s\n", path);
+
+        return close(fi->fh);
+    }
+
    private:
     std::unique_ptr<gRPCService::Stub> stub_;
 

@@ -91,6 +91,8 @@ class gRPCServiceImpl final : public gRPCService::Service {
             writer->Write(reply);
             buf = std::make_unique<std::string>(buf_size, '\0');
         }
+
+        close(fd);
         return Status::OK;
     }
 

@@ -69,6 +69,10 @@ static int do_rename(const char* oldpath, const char* newpath) {
     return GET_PDATA->client.c_rename(oldpath, newpath);
 }
 
+static int do_release(const char* path, struct fuse_file_info* fi) {
+    return GET_PDATA->client.c_release(path, fi);
+}
+
 static struct fuse_operations operations;
 
 int main(int argc, char* argv[]) {
@@ -93,6 +97,7 @@ int main(int argc, char* argv[]) {
     operations.unlink = do_unlink;
     operations.rename = do_rename;
     operations.fsync = do_fsync;
+    operations.release = do_release;
 
     return fuse_main(argc, argv, &operations, &private_data);
 }
