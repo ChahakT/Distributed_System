@@ -57,5 +57,6 @@ int main(int argc, char* argv[]) {
     BIND_OPERATION(fsync);
     BIND_OPERATION(release);
 
+    argv[2] = argv[0];
     return fuse_main(argc - 2, argv + 2, &operations, &private_data);
 }
