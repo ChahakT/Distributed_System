@@ -11,8 +11,9 @@
 class PrivateData {
    public:
     GRPCClient client;
-    explicit PrivateData(const std::shared_ptr<Channel>& channel)
-        : client(channel) {}
+    explicit PrivateData(const std::shared_ptr<Channel>& channel,
+                         const std::string cache_path)
+        : client(channel, cache_path) {}
 };
 
 static int do_getattr(const char* path, struct stat* st) {
@@ -76,14 +77,21 @@ static int do_release(const char* path, struct fuse_file_info* fi) {
 static struct fuse_operations operations;
 
 int main(int argc, char* argv[]) {
-    const std::string target_str = "0.0.0.0:50051";
+    if (argc < 3) {
+        printf("%s [server addr:port] [cache path] [fuse options]\n", argv[0]);
+        return 1;
+    }
+
+    const std::string target_str = argv[1];
     grpc::ChannelArguments ch_args;
 
     ch_args.SetMaxReceiveMessageSize(INT_MAX);
     ch_args.SetMaxSendMessageSize(INT_MAX);
 
-    PrivateData private_data = PrivateData(grpc::CreateCustomChannel(
-        target_str, grpc::InsecureChannelCredentials(), ch_args));
+    PrivateData private_data = PrivateData(
+        grpc::CreateCustomChannel(target_str,
+                                  grpc::InsecureChannelCredentials(), ch_args),
+        argv[2]);
 
     operations.getattr = do_getattr;
     operations.readdir = do_readdir;
@@ -99,5 +107,5 @@ int main(int argc, char* argv[]) {
     operations.fsync = do_fsync;
     operations.release = do_release;
 
-    return fuse_main(argc, argv, &operations, &private_data);
+    return fuse_main(argc - 2, argv + 2, &operations, &private_data);
 }

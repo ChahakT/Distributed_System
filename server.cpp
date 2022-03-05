@@ -18,15 +18,20 @@ using grpc::ServerReaderWriter;
 using grpc::ServerWriter;
 using grpc::Status;
 
-#define SERVER_FOLDER "./server_folder/"
 constexpr char kServerTempFolder[] = "./aafs_server_temp/";
 constexpr char kServerTransferTemplate[] =
     "./aafs_server_temp/aafs_serverXXXXXX";
 
 class gRPCServiceImpl final : public gRPCService::Service {
+   public:
+    explicit gRPCServiceImpl(const std::string server_folder)
+        : kServerFolder(std::move(server_folder)) {}
+
    private:
-    static std::string to_server_path(const std::string &path) {
-        return (SERVER_FOLDER + path);
+    const std::string kServerFolder;
+
+    std::string to_server_path(const std::string &path) {
+        return kServerFolder + path;
     }
 
     static std::pair<int, std::string> get_tmp_file() {
@@ -201,7 +206,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
     }
 };
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("%s [server folder]\n", argv[0]);
+        return 1;
+    }
+
     int ret = mkdir(kServerTempFolder, 0755);
     if (ret != 0) {
         if (errno == EEXIST) {  // delete all dirty files
@@ -213,7 +223,7 @@ int main() {
         }
     }
     std::string server_address("localhost:50051");
-    gRPCServiceImpl service;
+    gRPCServiceImpl service(argv[1]);
     ServerBuilder builder;
     // Listen on the given address without any authentication mechanism.
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());

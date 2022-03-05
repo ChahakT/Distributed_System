@@ -30,55 +30,25 @@ using grpc::Status;
     }
 #define GET_PDATA static_cast<PrivateData*>(fuse_get_context()->private_data)
 
-constexpr char kClientCacheFolder[] = "./aafs_client_cache/";
-constexpr char kClientTempFolder[] = "./aafs_client_temp/";
+constexpr char kClientCacheFolder[] = "/aafs_client_cache/";
+constexpr char kClientTempFolder[] = "/aafs_client_temp/";
 constexpr char kClientTransferTemplate[] =
-    "./aafs_client_temp/aafs_transferXXXXXX";
+    "/aafs_client_temp/aafs_transferXXXXXX";
 
 class GRPCClient {
-   private:
-    static std::string hash_str(const char* src) {
-        auto digest = std::make_unique<unsigned char[]>(SHA256_DIGEST_LENGTH);
-        SHA256(reinterpret_cast<const unsigned char*>(src), strlen(src),
-               digest.get());
-        std::stringstream ss;
-        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-            ss << std::hex << std::setw(2) << std::setfill('0')
-               << static_cast<int>(digest[i]);
-        }
-        return ss.str();
-    }
-
-    static std::string to_cache_path(const std::string& path) {
-        return (kClientCacheFolder + hash_str(path.c_str()));
-    }
-
-    static std::pair<int, std::string> get_tmp_file() {
-        char transfer_template[sizeof(kClientTransferTemplate)];
-        memcpy(transfer_template, kClientTransferTemplate,
-               sizeof(transfer_template));
-        int ret = mkstemp(transfer_template);
-        chmod(transfer_template, 0777);
-        return std::make_pair(ret, transfer_template);
-    }
-
-    static std::string to_write_cache_path(const char* path, int fd) {
-        return kClientTempFolder + hash_str(path) + std::to_string(fd) +
-               ".dirty";
-    }
-
    public:
-    explicit GRPCClient(const std::shared_ptr<Channel>& channel)
-        : stub_(gRPCService::NewStub(channel)) {
-        int ret = mkdir(kClientCacheFolder, 0755);
+    explicit GRPCClient(const std::shared_ptr<Channel>& channel,
+                        const std::string cache_path)
+        : stub_(gRPCService::NewStub(channel)), kCachePath(std::move(cache_path)) {
+        int ret = mkdir((kCachePath + kClientCacheFolder).c_str(), 0755);
         if (ret != 0 && errno != EEXIST) {
             assert_perror(errno);
         }
-        ret = mkdir(kClientTempFolder, 0755);
+        ret = mkdir((kCachePath + kClientTempFolder).c_str(), 0755);
         if (ret != 0) {
             if (errno == EEXIST) {  // delete all dirty files
-                for (const auto& entry :
-                     std::filesystem::directory_iterator(kClientTempFolder))
+                for (const auto& entry : std::filesystem::directory_iterator(
+                         kCachePath + kClientTempFolder))
                     std::filesystem::remove_all(entry.path());
             } else {
                 assert_perror(errno);
@@ -393,7 +363,35 @@ class GRPCClient {
     }
 
    private:
-    std::unique_ptr<gRPCService::Stub> stub_;
+    static std::string hash_str(const char* src) {
+        auto digest = std::make_unique<unsigned char[]>(SHA256_DIGEST_LENGTH);
+        SHA256(reinterpret_cast<const unsigned char*>(src), strlen(src),
+               digest.get());
+        std::stringstream ss;
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+            ss << std::hex << std::setw(2) << std::setfill('0')
+               << static_cast<int>(digest[i]);
+        }
+        return ss.str();
+    }
 
+    std::string to_cache_path(const std::string& path) {
+        return (kCachePath + kClientCacheFolder + hash_str(path.c_str()));
+    }
+
+    std::pair<int, std::string> get_tmp_file() {
+        std::string transfer_template = kCachePath + kClientTransferTemplate;
+        int ret = mkstemp(transfer_template.data());
+        chmod(transfer_template.c_str(), 0777);
+        return std::make_pair(ret, transfer_template);
+    }
+
+    std::string to_write_cache_path(const char* path, int fd) {
+        return kCachePath + kClientTempFolder + hash_str(path) +
+               std::to_string(fd) + ".dirty";
+    }
+
+    std::unique_ptr<gRPCService::Stub> stub_;
     std::unordered_set<int> dirty_fds;
+    const std::string kCachePath;
 };
