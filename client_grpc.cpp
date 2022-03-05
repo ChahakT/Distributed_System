@@ -56,7 +56,7 @@ class GRPCClient {
         char transfer_template[sizeof(kClientTransferTemplate)];
         memcpy(transfer_template, kClientTransferTemplate,
                sizeof(transfer_template));
-        int ret = mkstemp(transfer_template);
+        int ret = mkostemp(transfer_template, 0777);
         return std::make_pair(ret, transfer_template);
     }
 
@@ -280,6 +280,7 @@ class GRPCClient {
         constexpr int buf_size = 4096;
         auto buf = std::make_unique<std::string>(buf_size, '\0');
         ssize_t n;
+        lseek(fi->fh, 0, SEEK_SET);
         while ((n = read(fi->fh, buf->data(), buf_size)) > 0) {
             buf->resize(n);
             req.set_allocated_data(buf.release());

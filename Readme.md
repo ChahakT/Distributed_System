@@ -55,3 +55,14 @@ make -j
         }
     };
     ```
+## Benchmark
+### Compiling Htop
+```sh
+cd server_folder
+tar zxvf 3.1.2.tar.gz #cannot do it in fuse due to lack of symlink
+./autogen.sh #cannot do it in fuse due to lack of truncate
+./configure #cannot do it in fuse due to lack of chmod
+
+cd {mount_point}
+make
+```
