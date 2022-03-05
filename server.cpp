@@ -207,8 +207,8 @@ class gRPCServiceImpl final : public gRPCService::Service {
 };
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("%s [server folder]\n", argv[0]);
+    if (argc < 3) {
+        printf("%s [listen address:port] [server folder]\n", argv[0]);
         return 1;
     }
 
@@ -222,8 +222,8 @@ int main(int argc, char *argv[]) {
             assert_perror(errno);
         }
     }
-    std::string server_address("localhost:50051");
-    gRPCServiceImpl service(argv[1]);
+    std::string server_address(argv[1]);
+    gRPCServiceImpl service(argv[2]);
     ServerBuilder builder;
     // Listen on the given address without any authentication mechanism.
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
