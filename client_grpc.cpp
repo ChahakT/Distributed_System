@@ -218,6 +218,7 @@ class GRPCClient {
         // copy-on-write
         if (access(write_path.c_str(), F_OK) != 0) {
             printf("[write] copy-on-write!\n");
+            lseek(fi->fh, 0, SEEK_SET);
             int fd1 = fi->fh;
             int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
             char buf[4096];
