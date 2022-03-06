@@ -16,6 +16,7 @@
 #include <set>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include "includes/hello.grpc.pb.h"
 #include "includes/hello.pb.h"
@@ -64,22 +65,23 @@ class GRPCClient {
         printf("[getattr] %s\n", path);
 
         auto now = std::chrono::steady_clock::now();
-        while (cached_stat.size()) {
-            auto [time, cached_path, cached_st] = cached_stat.front();
+        while (cached_stat_time.size()) {
+            auto [time, cached_path] = cached_stat_time.front();
             if (std::chrono::duration_cast<std::chrono::milliseconds>(now -
                                                                       time)
-                    .count() > kCachedStatTimeoutMs)
-                cached_stat.pop_front();
-            else
+                    .count() > kCachedStatTimeoutMs) {
+                cached_stat.erase(cached_path);
+                cached_stat_time.pop_front();
+            } else {
                 break;
+            }
         }
 
-        for (auto [time, cached_path, cached_st] : cached_stat) {
-            if (cached_path == path) {
-                *st = cached_st;
-                printf("[getattr] cache hit %s\n", path);
-                return 0;
-            }
+        auto iter = cached_stat.find(path);
+        if (iter != cached_stat.end()) {
+            printf("[getattr] cache hit %s\n", path);
+            *st = iter->second;
+            return 0;
         }
 
         printf("[getattr] cache miss %s\n", path);
@@ -107,7 +109,8 @@ class GRPCClient {
         st->st_mtime = reply.stat().mtime();
         st->st_ctime = reply.stat().ctime();
 
-        cached_stat.push_back(std::make_tuple(now, path, *st));
+        cached_stat_time.push_back(std::make_tuple(now, path));
+        cached_stat[path] = *st;
 
         return 0;
     }
@@ -221,6 +224,9 @@ class GRPCClient {
 
     int c_create(const char* path, mode_t mode, struct fuse_file_info* fi) {
         printf("[creat] %s\n", path);
+
+        cached_stat.erase(path);
+
         auto cache_path = to_cache_path(path);
         aafs::PathRequest request;
         request.set_path(path);
@@ -270,6 +276,8 @@ class GRPCClient {
         if (dirty_fds.count(fi->fh) == 0) {
             return 0;
         }
+
+        cached_stat.erase(path);
 
         aafs::UploadRequest req;
         auto meta = std::make_unique<aafs::UploadMeta>();
@@ -324,6 +332,8 @@ class GRPCClient {
     int c_unlink(const char* path) {
         printf("[unlink] %s\n", path);
 
+        cached_stat.erase(path);
+
         aafs::PathRequest request;
         request.set_path(path);
 
@@ -342,6 +352,9 @@ class GRPCClient {
 
     int c_mkdir(const char* path, mode_t mode) {
         printf("[mkdir] %s\n", path);
+
+        cached_stat.erase(path);
+
         aafs::PathRequest request;
         request.set_path(path);
         aafs::StatusResponse reply;
@@ -356,6 +369,9 @@ class GRPCClient {
 
     int c_rmdir(const char* path) {
         printf("[rmdir] %s\n", path);
+
+        cached_stat.erase(path);
+
         aafs::PathRequest request;
         request.set_path(path);
         aafs::StatusResponse reply;
@@ -370,6 +386,9 @@ class GRPCClient {
 
     int c_rename(const char* oldpath, const char* newpath) {
         printf("[rename] %s %s\n", oldpath, newpath);
+
+        cached_stat.erase(oldpath);
+        cached_stat.erase(newpath);
 
         const std::string cached_oldpath = to_cache_path(oldpath);
         const std::string cached_newpath = to_cache_path(newpath);
@@ -439,6 +458,7 @@ class GRPCClient {
 
     static constexpr int kCachedStatTimeoutMs = 1000;
     std::deque<std::tuple<std::chrono::time_point<std::chrono::steady_clock>,
-                          std::string, struct stat>>
-        cached_stat;
+                          std::string>>
+        cached_stat_time;
+    std::unordered_map<std::string, struct stat> cached_stat;
 };
