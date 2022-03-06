@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <set>
 #include <string>
@@ -65,6 +66,7 @@ class GRPCClient {
         printf("[getattr] %s\n", path);
 
         auto now = std::chrono::steady_clock::now();
+        cached_stat_mutex.lock();
         while (cached_stat_time.size()) {
             auto [time, cached_path] = cached_stat_time.front();
             if (std::chrono::duration_cast<std::chrono::milliseconds>(now -
@@ -76,8 +78,11 @@ class GRPCClient {
                 break;
             }
         }
+        cached_stat_mutex.unlock();
 
+        cached_stat_mutex.lock();
         auto iter = cached_stat.find(path);
+        cached_stat_mutex.unlock();
         if (iter != cached_stat.end()) {
             printf("[getattr] cache hit %s\n", path);
             *st = iter->second;
@@ -109,8 +114,10 @@ class GRPCClient {
         st->st_mtime = reply.stat().mtime();
         st->st_ctime = reply.stat().ctime();
 
+        cached_stat_mutex.lock();
         cached_stat_time.push_back(std::make_tuple(now, path));
         cached_stat[path] = *st;
+        cached_stat_mutex.unlock();
 
         return 0;
     }
@@ -225,7 +232,9 @@ class GRPCClient {
     int c_create(const char* path, mode_t mode, struct fuse_file_info* fi) {
         printf("[creat] %s\n", path);
 
+        cached_stat_mutex.lock();
         cached_stat.erase(path);
+        cached_stat_mutex.unlock();
 
         auto cache_path = to_cache_path(path);
         aafs::PathRequest request;
@@ -277,7 +286,9 @@ class GRPCClient {
             return 0;
         }
 
+        cached_stat_mutex.lock();
         cached_stat.erase(path);
+        cached_stat_mutex.unlock();
 
         aafs::UploadRequest req;
         auto meta = std::make_unique<aafs::UploadMeta>();
@@ -332,7 +343,9 @@ class GRPCClient {
     int c_unlink(const char* path) {
         printf("[unlink] %s\n", path);
 
+        cached_stat_mutex.lock();
         cached_stat.erase(path);
+        cached_stat_mutex.unlock();
 
         aafs::PathRequest request;
         request.set_path(path);
@@ -353,7 +366,9 @@ class GRPCClient {
     int c_mkdir(const char* path, mode_t mode) {
         printf("[mkdir] %s\n", path);
 
+        cached_stat_mutex.lock();
         cached_stat.erase(path);
+        cached_stat_mutex.unlock();
 
         aafs::PathRequest request;
         request.set_path(path);
@@ -370,7 +385,9 @@ class GRPCClient {
     int c_rmdir(const char* path) {
         printf("[rmdir] %s\n", path);
 
+        cached_stat_mutex.lock();
         cached_stat.erase(path);
+        cached_stat_mutex.unlock();
 
         aafs::PathRequest request;
         request.set_path(path);
@@ -387,8 +404,10 @@ class GRPCClient {
     int c_rename(const char* oldpath, const char* newpath) {
         printf("[rename] %s %s\n", oldpath, newpath);
 
+        cached_stat_mutex.lock();
         cached_stat.erase(oldpath);
         cached_stat.erase(newpath);
+        cached_stat_mutex.unlock();
 
         const std::string cached_oldpath = to_cache_path(oldpath);
         const std::string cached_newpath = to_cache_path(newpath);
@@ -457,6 +476,7 @@ class GRPCClient {
     const std::string kCachePath;
 
     static constexpr int kCachedStatTimeoutMs = 1000;
+    std::mutex cached_stat_mutex;
     std::deque<std::tuple<std::chrono::time_point<std::chrono::steady_clock>,
                           std::string>>
         cached_stat_time;
