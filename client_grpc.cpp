@@ -223,9 +223,10 @@ class GRPCClient {
             int fd1 = fi->fh;
             int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
 
+            lseek(fd1, 0, SEEK_SET);
             // Ref:
             // https://stackoverflow.com/questions/52766388/how-can-i-use-the-copy-on-write-of-a-btrfs-from-c-code
-            if (ioctl(fd1, FICLONE, fd2) < 0) {
+            if (ioctl(fd2, FICLONE, fd1) < 0) {
                 perror("ioctl");
             }
 
