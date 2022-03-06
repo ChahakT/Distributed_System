@@ -101,13 +101,15 @@ class gRPCServiceImpl final : public gRPCService::Service {
         reply.set_allocated_time(matime.release());
         writer->Write(reply);
 
-        constexpr int buf_size = 4096;
+        constexpr int buf_size = 409600;
         auto buf = std::make_unique<std::string>(buf_size, '\0');
         ssize_t n;
-        while ((n = read(fd, buf->data(), sizeof(buf))) > 0) {
+        while ((n = read(fd, buf->data(), buf_size)) > 0) {
             buf->resize(n);
             reply.set_allocated_data(buf.release());
-            writer->Write(reply);
+            if (!writer->Write(reply)) {
+                return Status::CANCELLED;
+            }
             buf = std::make_unique<std::string>(buf_size, '\0');
         }
         fsync(fd);

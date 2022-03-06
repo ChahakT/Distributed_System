@@ -182,7 +182,11 @@ class GRPCClient {
         auto [tmp_fd, tmp_name] = get_tmp_file();
         RET_ERR(tmp_fd);
         while (reader->Read(&content)) {
-            auto ret =
+            if (!content.has_data()) {
+                close(tmp_fd);
+                return -ENONET;
+            }
+            int ret =
                 write(tmp_fd, content.data().c_str(), content.data().size());
             if (ret < 0) {
                 close(tmp_fd);
@@ -251,6 +255,7 @@ class GRPCClient {
                 write(fd2, buf, n);
             }
             dup2(fd2, fd1);
+            close(fd2);
             dirty_fds.insert(fd1);
         }
         int fd = fi->fh;
@@ -286,7 +291,7 @@ class GRPCClient {
             return -ENONET;
         }
 
-        constexpr int buf_size = 4096;
+        constexpr int buf_size = 409600;
         auto buf = std::make_unique<std::string>(buf_size, '\0');
         ssize_t n;
         lseek(fi->fh, 0, SEEK_SET);
