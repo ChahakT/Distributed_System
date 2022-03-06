@@ -216,20 +216,21 @@ class GRPCClient {
         printf("[write] %s\n", path);
         auto write_path = to_write_cache_path(path, fi->fh);
         // copy-on-write
-        if (access(write_path.c_str(), F_OK) != 0) {
-            printf("[write] copy-on-write!\n");
-            int fd1 = fi->fh;
-            int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
-            char buf[4096];
-            memset(buf, 0, sizeof(buf));
-            ssize_t n;
-            while ((n = read(fd1, buf, sizeof(buf))) > 0) {
-                write(fd2, buf, n);
-            }
-            dup2(fd2, fd1);
-            dirty_fds.insert(fd1);
-        }
+        // if (access(write_path.c_str(), F_OK) != 0) {
+        //     printf("[write] copy-on-write!\n");
+        //     int fd1 = fi->fh;
+        //     int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
+        //     char buf[4096];
+        //     memset(buf, 0, sizeof(buf));
+        //     ssize_t n;
+        //     while ((n = read(fd1, buf, sizeof(buf))) > 0) {
+        //         write(fd2, buf, n);
+        //     }
+        //     dup2(fd2, fd1);
+        //     dirty_fds.insert(fd1);
+        // }
         int fd = fi->fh;
+        dirty_fds.insert(fd);
         size_t ret;
         RET_ERR(ret = pwrite(fd, buffer, size, offset));
         return ret;
@@ -281,10 +282,11 @@ class GRPCClient {
         if (!status.ok()) {
             return -ENONET;
         }
-        if (rename(to_write_cache_path(path, fi->fh).c_str(),
-                   to_cache_path(path).c_str()) == 0) {
-            dirty_fds.erase(fi->fh);
-        }
+        // if (rename(to_write_cache_path(path, fi->fh).c_str(),
+        //            to_cache_path(path).c_str()) == 0) {
+        //     dirty_fds.erase(fi->fh);
+        // }
+        dirty_fds.erase(fi->fh);
         return 0;
     }
 
