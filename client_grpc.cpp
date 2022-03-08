@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utime.h>
+#include <stdio.h>
+#include "iostream"
 
 #include <cstdio>
 #include <cstring>
@@ -117,6 +119,9 @@ class GRPCClient {
 
         struct stat server_st {};
         if (sret == 0) {
+            if (std::getenv("PRINT_LOG")[0] == '1') {
+                printf("File found in client cache\n");
+            }
             int ret = c_getattr(path, &server_st);
             if (ret == -ENOENT) {
                 // File deleted on server
@@ -128,10 +133,21 @@ class GRPCClient {
             }
             // Cache file up-to-date
             if (client_st.st_mtime >= server_st.st_mtime) {
+                if (std::getenv("PRINT_LOG")[0] == '1') {
+                    printf("Cache File is up-to-date\n");
+                }
                 int fd = open(cache_path.c_str(), O_RDWR);
                 RET_ERR(fd);
                 fi->fh = fd;
                 return 0;
+            } else {
+                if (std::getenv("PRINT_LOG")[0] == '1') {
+                    printf("Cache File is stale\n");
+                }
+            }
+        } else {
+            if (std::getenv("PRINT_LOG")[0] == '1') {
+                printf("File not found in client cache\n");
             }
         }
 
@@ -173,12 +189,28 @@ class GRPCClient {
             return -ENOENT;
         }
 
+        if (std::getenv("PRINT_LOG")[0] == '1') {
+            printf("Server File written in temp, check temp\n");
+            sleep(1);
+        }
+
+        if (std::getenv("ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN")[0] == '1') {
+            printf("Exiting before renaming temp file created on open() call\n");
+            exit(1);
+        }
+
         struct utimbuf times {};
         times.actime = atime;
         times.modtime = mtime;
         RET_ERR(utime(tmp_name.c_str(), &times));
         fsync(tmp_fd);
         RET_ERR(rename(tmp_name.c_str(), cache_path.c_str()));
+
+        if (std::getenv("PRINT_LOG")[0] == '1') {
+            printf("Temp file renamed to cache file, check temp\n");
+            sleep(1);
+        }
+
         fi->fh = tmp_fd;
         return 0;
     }
@@ -217,8 +249,7 @@ class GRPCClient {
         auto write_path = to_write_cache_path(path, fi->fh);
         // copy-on-write
         if (access(write_path.c_str(), F_OK) != 0) {
-            printf("[write] copy-on-write!\n");
-            lseek(fi->fh, 0, SEEK_SET);
+            printf("[write] copy-on-write to a dirty file!\n");
             int fd1 = fi->fh;
             int fd2 = open(write_path.c_str(), O_RDWR | O_CREAT, 0644);
             char buf[4096];
@@ -228,8 +259,15 @@ class GRPCClient {
                 write(fd2, buf, n);
             }
             dup2(fd2, fd1);
-            close(fd2);
             dirty_fds.insert(fd1);
+            if (std::getenv("PRINT_LOG")[0] == '1') {
+                printf("File copied to dirty file, check dirty file presence\n");
+                sleep(1);
+            }
+        }
+        if (std::getenv("ENV_CLIENT_CRASH_DURING_WRITE")[0] == '1') {
+            printf("Exiting in between write\n");
+            std::abort();
         }
         int fd = fi->fh;
         size_t ret;
@@ -244,6 +282,9 @@ class GRPCClient {
             return 0;
         }
 
+        if (std::getenv("PRINT_LOG")[0] == '1') {
+            printf("Files are present for flush\n");
+        }
         aafs::UploadRequest req;
         auto meta = std::make_unique<aafs::UploadMeta>();
         aafs::StatusResponse reply;
@@ -255,7 +296,7 @@ class GRPCClient {
         fsync(fi->fh);
         struct stat st;
         fstat(fi->fh, &st);
-
+        // send access and modified time to server
         meta->set_path(path);
         meta->set_atime(st.st_atime);
         meta->set_mtime(st.st_mtime);
@@ -280,13 +321,31 @@ class GRPCClient {
 
         writer->WritesDone();
         Status status = writer->Finish();
+
+        if (std::getenv("PRINT_LOG")[0] == '1') {
+            printf("Dirty file is written to server, check \n");
+            sleep(1);
+        }
+
         if (!status.ok()) {
             return -ENONET;
         }
+
+        if (std::getenv("ENV_CLIENT_CRASH_BEFORE_RENAMING_DIRTY_FILE")[0] == '1') {
+            printf("Exiting before rename dirty file\n");
+            exit(1);
+        }
+
         if (rename(to_write_cache_path(path, fi->fh).c_str(),
                    to_cache_path(path).c_str()) == 0) {
             dirty_fds.erase(fi->fh);
         }
+
+        if (std::getenv("PRINT_LOG")[0] == '1') {
+            printf("Dirty file is renamed to client cache file, check\n");
+            sleep(1);
+        }
+
         return 0;
     }
 
@@ -373,7 +432,6 @@ class GRPCClient {
 
     int c_release(const char* path, struct fuse_file_info* fi) {
         printf("[release] %s\n", path);
-
         return close(fi->fh);
     }
 

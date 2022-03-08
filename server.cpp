@@ -24,11 +24,13 @@ constexpr char kServerTransferTemplate[] =
 
 class gRPCServiceImpl final : public gRPCService::Service {
    public:
-    explicit gRPCServiceImpl(const std::string server_folder)
-        : kServerFolder(std::move(server_folder)) {}
+    explicit gRPCServiceImpl(const std::string server_folder, const std::string TestFlag)
+        : kServerFolder(std::move(server_folder)),
+          s_TestFlag(std::move(TestFlag)) {}
 
    private:
     const std::string kServerFolder;
+    const std::string s_TestFlag;
 
     std::string to_server_path(const std::string &path) {
         return kServerFolder + path;
@@ -104,6 +106,9 @@ class gRPCServiceImpl final : public gRPCService::Service {
         constexpr int buf_size = 409600;
         auto buf = std::make_unique<std::string>(buf_size, '\0');
         ssize_t n;
+
+
+
         while ((n = read(fd, buf->data(), buf_size)) > 0) {
             buf->resize(n);
             reply.set_allocated_data(buf.release());
@@ -112,6 +117,13 @@ class gRPCServiceImpl final : public gRPCService::Service {
             }
             buf = std::make_unique<std::string>(buf_size, '\0');
         }
+
+        if (s_TestFlag.compare("2") == 0) {
+            std::cout << "Reliability test 2 failed, Download of file failed before read starts at server" << std::endl;
+            std::cout.flush();
+            exit(1);
+        }
+
         fsync(fd);
         close(fd);
         return Status::OK;
@@ -153,6 +165,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
         times.actime = atime;
         times.modtime = mtime;
         utime(tmp_name.c_str(), &times);
+
+        if (s_TestFlag.compare("1") == 0) {
+            std::cout << "Reliability test 1 failed, before rename of file by server" << std::endl;
+            std::cout.flush();
+            exit(1);
+        }
         rename(tmp_name.c_str(), to_server_path(path).c_str());
 
         reply->set_ret(0);
@@ -179,10 +197,12 @@ class gRPCServiceImpl final : public gRPCService::Service {
 
     Status s_mkdir(ServerContext *context, const aafs::PathRequest *req,
                    aafs::StatusResponse *reply) override {
+        printf("[mkdir] %s\n", to_server_path(req->path()).c_str());
         int ret = mkdir(to_server_path(req->path()).c_str(), 0777);
+        std::cout << ret << std::endl;
         if (ret == -1) {
             reply->set_ret(-errno);
-            return Status::OK;
+            return Status::CANCELLED;
         }
         reply->set_ret(ret);
         return Status::OK;
@@ -193,7 +213,7 @@ class gRPCServiceImpl final : public gRPCService::Service {
         int ret = rmdir(to_server_path(req->path()).c_str());
         if (ret == -1) {
             reply->set_ret(-errno);
-            return Status::OK;
+            return Status::CANCELLED;
         }
         reply->set_ret(ret);
         return Status::OK;
@@ -201,6 +221,7 @@ class gRPCServiceImpl final : public gRPCService::Service {
 
     Status s_rename(ServerContext *context, const aafs::RenameRequest *req,
                     aafs::StatusResponse *reply) override {
+        std::cout << "rename called" <<std::endl;
         int ret = rename(to_server_path(req->oldpath()).c_str(),
                          to_server_path(req->newpath()).c_str());
         reply->set_ret(ret);
@@ -225,7 +246,7 @@ int main(int argc, char *argv[]) {
         }
     }
     std::string server_address(argv[1]);
-    gRPCServiceImpl service(argv[2]);
+    gRPCServiceImpl service(argv[2], argv[3]);
     ServerBuilder builder;
     // Listen on the given address without any authentication mechanism.
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
