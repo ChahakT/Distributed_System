@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project(Fs)
 
 set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
 include(FetchContent)
 
@@ -13,7 +12,6 @@ FetchContent_Declare(
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(gRPC)
-
 
 add_custom_command(
         OUTPUT includes/hello.pb.cc includes/hello.grpc.pb.cc
@@ -34,3 +32,5 @@ add_executable(client client.cpp client_grpc.cpp includes/hello.pb.cc includes/h
 target_link_libraries(client grpc++)
 target_link_libraries(client OpenSSL::SSL)
 target_link_libraries(client ${FUSE_LIBRARIES})
+
+add_executable(test test_folder/test.cpp)
