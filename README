@@ -23,9 +23,10 @@ To test the htop compilation workload
   sudo apt install libncursesw5-dev autotools-dev autoconf build-essential
   cd server_folder
   tar zxvf 3.1.2.tar.gz #cannot do it in fuse due to lack of symlink
+  cd htop-3.1.2
   ./autogen.sh #cannot do it in fuse due to lack of truncate
   ./configure #cannot do it in fuse due to lack of chmod
-  cd ../mount_point
+  cd ../../mount_point/htop-3.1.2
   make
   ./htop
 

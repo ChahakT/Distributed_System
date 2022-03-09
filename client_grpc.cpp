@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <string>
 
@@ -229,7 +230,9 @@ class GRPCClient {
             }
             dup2(fd2, fd1);
             close(fd2);
+            mutex.lock();
             dirty_fds.insert(fd1);
+            mutex.unlock();
         }
         int fd = fi->fh;
         size_t ret;
@@ -240,7 +243,10 @@ class GRPCClient {
     int c_flush(const char* path, struct fuse_file_info* fi) {
         printf("[flush] %s\n", path);
 
-        if (dirty_fds.count(fi->fh) == 0) {
+        mutex.lock();
+        auto count = dirty_fds.count(fi->fh);
+        mutex.unlock();
+        if (count == 0) {
             return 0;
         }
 
@@ -285,7 +291,9 @@ class GRPCClient {
         }
         if (rename(to_write_cache_path(path, fi->fh).c_str(),
                    to_cache_path(path).c_str()) == 0) {
+            mutex.lock();
             dirty_fds.erase(fi->fh);
+            mutex.unlock();
         }
         return 0;
     }
@@ -408,5 +416,6 @@ class GRPCClient {
 
     std::unique_ptr<gRPCService::Stub> stub_;
     std::unordered_set<int> dirty_fds;
+    std::mutex mutex;
     const std::string kCachePath;
 };
