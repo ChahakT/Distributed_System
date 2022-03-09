@@ -1,4 +1,3 @@
-#include "test.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -19,7 +18,8 @@ int main(int argc, char* argv[]) {
     std::string file1 = argv[2];
     std::string file2 = argv[3];
     int check;
-    const char dirname[] = mnt_dir + "/dir1";
+    std::string dirname_str = mnt_dir + "/dir1";
+    const char *dirname = dirname_str.c_str();
     check = mkdir(dirname, 0777);
 
     // check if directory is created or not
