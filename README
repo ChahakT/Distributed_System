@@ -70,6 +70,3 @@ Run Server with : ./server 127.0.0.1:11225 ./server_folder 2
 
 Case 3: 
 Run Server normally : ./server 127.0.0.1:11225 ./server_folder 0
-
-
-a
