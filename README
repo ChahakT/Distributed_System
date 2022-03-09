@@ -56,4 +56,15 @@ Run client with: 	ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN=0 ENV_CLIENT_CRASH_DURING_
 
 2.2.3 Server Crash
 
+
+Case 1:
+Run Server with : ./server 127.0.0.1:11225 ./server_folder 1
+
+Case 2:
+Run Server with : ./server 127.0.0.1:11225 ./server_folder 2
+
+Case 3: 
+Run Server normally : ./server 127.0.0.1:11225 ./server_folder 0
+
+
 a
