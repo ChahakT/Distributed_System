@@ -33,7 +33,13 @@ To test the htop compilation workload
 2. Measurement
 2.1 Performance
 
-baseline, no_consistency
+The four different implementations are in the following four folders:
+
+1. baseline: This is the normal implementation.
+2. btrfs: This implementation utilizes Btrfs to improve the performance. It can only be run correctly if the client cache folder is formatted as Btrfs.
+3. getattr_cache: The client in this folder caches the getattr results for one second.
+4. no_consistency: This implementation reduces the consistency guarantee by removing code that handles the dirty files.
+
 
 2.2 Reliability
 Modified code to run this part can be find in the `reliability` folder
