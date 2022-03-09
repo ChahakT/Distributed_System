@@ -1,24 +1,24 @@
 cmake_minimum_required(VERSION 3.15)
 project(Fs)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
 include(FetchContent)
 
-FetchContent_Declare(
-        gRPC
-        GIT_REPOSITORY https://github.com/grpc/grpc
-        GIT_TAG        v1.44.0
+fetchcontent_declare(
+  gRPC
+  GIT_REPOSITORY https://github.com/grpc/grpc
+  GIT_TAG v1.44.0
 )
 set(FETCHCONTENT_QUIET OFF)
-FetchContent_MakeAvailable(gRPC)
+fetchcontent_makeavailable(gRPC)
 
 
 add_custom_command(
-        OUTPUT includes/hello.pb.cc includes/hello.grpc.pb.cc
-        COMMAND ./gen_proto.sh
-        DEPENDS protos/hello.proto protoc
+  OUTPUT includes/hello.pb.cc includes/hello.grpc.pb.cc
+  COMMAND ./gen_proto.sh
+  DEPENDS protos/hello.proto protoc
 )
 
 

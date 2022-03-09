@@ -6,7 +6,12 @@
   Similarly you can find the server implementation in the `gRPCServiceImpl` class in `server.cpp`.
   The main function of `server.cpp` and the constructor of `GRPCClient` implements the initialization and crash recovery procedure.
 
-To compile the code, run:
+To compile the code:
+ Prerequisite:
+  libfuse, libssl, cmake >= 3.15, a recent version of c++ compiler that support at least c++20
+ On ubuntu 20.04:
+  sudo apt install libfuse-dev libssl-dev cmake g++
+ Compile command:
   cmake . && make -j
 
 To run the code:
