@@ -1,0 +1,59 @@
+1. Functionlity & Correctness
+
+  The baseline implementation in in the `baseline` folder
+  In general, only `client_grpc.cpp` and `server.cpp` are interesting. (`client.cpp` contains some glue code to glue grpc and fuse together)
+  In client_grpc.cpp, you will see a `GRPCClient` class which contains all client fuse operation implementations in the name of `c_{operation}`
+  Similarly you can find the server implementation in the `gRPCServiceImpl` class in `server.cpp`.
+  The main function of `server.cpp` and the constructor of `GRPCClient` implements the initialization and crash recovery procedure.
+
+To compile the code, run:
+  cmake . && make -j
+
+To run the code:
+  ./server 0.0.0.0:12345 ./server_folder
+  mkdir cache mount_point
+  ./client 127.0.0.1:12345 ./cache -f ./mount_point
+
+To test the htop compilation workload
+  sudo apt install libncursesw5-dev autotools-dev autoconf build-essential
+  cd server_folder
+  tar zxvf 3.1.2.tar.gz #cannot do it in fuse due to lack of symlink
+  ./autogen.sh #cannot do it in fuse due to lack of truncate
+  ./configure #cannot do it in fuse due to lack of chmod
+  cd ../mount_point
+  make
+  ./htop
+
+
+2. Measurement
+2.1 Performance
+
+baseline, no_consistency
+
+2.2 Reliability
+Modified code to run this part can be find in the `reliability` folder
+
+2.2.1 Normal functioning test:
+Copy 1 file to another 
+(used for testing client and server crash scenarios, test present in test_folder/test.cpp)
+Run test with ./test
+
+Run server with: 	 ./server ${localhost}:${server_port} ./server_folder 0
+
+Run client with: 	ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN=0 ENV_CLIENT_CRASH_DURING_WRITE=0 ENV_CLIENT_CRASH_BEFORE_RENAMING_DIRTY_FILE=0 PRINT_LOG=1 ./client ${localhost}:${client_port} ./ -f ./mnt
+
+2.2.2 Client Crash (relevant code if found in client_grpc.cc)
+Run server with: 	./server ${localhost}:${server_port} ./server_folder 0
+
+Case 1:
+Run client with:	ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN=1 ENV_CLIENT_CRASH_DURING_WRITE=0 ENV_CLIENT_CRASH_BEFORE_RENAMING_DIRTY_FILE=0 PRINT_LOG=1 ./client ${localhost}:${client_port} ./ -f ./mnt
+
+Case 2:
+Run client with: 	ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN=0 ENV_CLIENT_CRASH_DURING_WRITE=1 ENV_CLIENT_CRASH_BEFORE_RENAMING_DIRTY_FILE=0 PRINT_LOG=1 ./client ${localhost}:${client_port} ./ -f ./mnt
+
+Case 3:
+Run client with: 	ENV_CLIENT_CRASH_BEFORE_RENAME_OPEN=0 ENV_CLIENT_CRASH_DURING_WRITE=0 ENV_CLIENT_CRASH_BEFORE_RENAMING_DIRTY_FILE=1 PRINT_LOG=1 ./client ${localhost}:${client_port} ./ -f ./mnt
+
+2.2.3 Server Crash
+
+a
